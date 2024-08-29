@@ -116,7 +116,7 @@ Future<int> insertBranch(Branch branch) async {
   result = await db.rawInsert(
     """
       INSERT INTO branch(branchname)
-      VALUES ?)
+      VALUES (?)
     """,
     [
       branch.branchname,
@@ -132,7 +132,7 @@ Future<int> insertShoe(Shoes shoes) async {
   result = await db.rawInsert(
     """
       INSERT INTO shoes(shoesname, price, image, size, brand)
-      VALUES ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?)
     """,
     [
       shoes.shoesname,

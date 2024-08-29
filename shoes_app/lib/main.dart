@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shoes_app/view/sign_in.dart';
+import 'package:shoes_app/view/test.dart';
 
 
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SignIn(),
+      home: const Test(),
     );
   }
 }
