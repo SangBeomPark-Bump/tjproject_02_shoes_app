@@ -69,7 +69,7 @@ class DatabaseHandler{
     final Database db = await initializeDB();
     result = await db.rawInsert(
       """
-        insert into address(id, password, name, phone, email,rnumber)
+        insert into customer(id, password, name, phone, email,rnumber)
         values (?,?,?,?,?,?)
       """,
       [

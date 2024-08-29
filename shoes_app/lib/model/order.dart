@@ -6,9 +6,9 @@ class Order{
   int shoes_seq;
   int order_seq;
   int quantity;
-  DateTime paymenttime;
-  DateTime canceltime;
-  DateTime pickuptime;
+  DateTime? paymenttime;
+  DateTime? canceltime;
+  DateTime? pickuptime;
 
   Order({
     required this.seq,
@@ -17,9 +17,9 @@ class Order{
     required this.shoes_seq,
     required this.order_seq,
     required this.quantity,
-    required this.paymenttime,
-    required this.canceltime,
-    required this.pickuptime,
+    this.paymenttime,
+    this.canceltime,
+    this.pickuptime,
   });
 
   Order.fromMap(Map<String, dynamic> res)
