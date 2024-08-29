@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoes_app/model/branch.dart';
 import 'package:shoes_app/model/customer.dart';
+import 'package:shoes_app/model/made_order_psb.dart';
+import 'package:shoes_app/model/order.dart';
 import 'package:shoes_app/model/shoes.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 

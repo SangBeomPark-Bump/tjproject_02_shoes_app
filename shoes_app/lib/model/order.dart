@@ -6,7 +6,7 @@ class Order{
   int shoes_seq;
   int order_seq;
   int quantity;
-  DateTime? paymenttime;
+  DateTime paymenttime;
   DateTime? canceltime;
   DateTime? pickuptime;
 
@@ -17,7 +17,7 @@ class Order{
     required this.shoes_seq,
     required this.order_seq,
     required this.quantity,
-    this.paymenttime,
+    required this.paymenttime,
     this.canceltime,
     this.pickuptime,
   });
@@ -29,8 +29,7 @@ class Order{
   shoes_seq = res['shoes_seq'],
   order_seq = res['order_seq'],
   quantity = res['quantity'],
-  paymenttime = res['paymenttime'],
-  canceltime = res['canceltime'],
-  pickuptime = res['pickuptime'];
-  
+  paymenttime = DateTime.parse(res['paymenttime']),
+  canceltime = res['canceltime'] == null ? DateTime.parse(res['canceltime']) : null ,
+  pickuptime = res['pickuptime'] == null ? DateTime.parse(res['pickuptime']) : null ;  
 }
