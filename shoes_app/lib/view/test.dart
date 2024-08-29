@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoes_app/model/branch.dart';
 import 'package:shoes_app/model/customer.dart';
+import 'package:shoes_app/model/made_order_psb.dart';
+import 'package:shoes_app/model/order.dart';
 import 'package:shoes_app/model/shoes.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 
@@ -25,10 +27,6 @@ class _TestState extends State<Test> {
     handler = DatabaseHandler();
   }
   
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +60,12 @@ class _TestState extends State<Test> {
                 pressed4();
               },
               child: const Text('주문')
+            ),
+            ElevatedButton(
+              onPressed: (){
+                seqMaker();
+              },
+              child: const Text('프린트')
             ),
           ],
         ),
@@ -114,7 +118,7 @@ pressed2()async{
   List<Customer> customers = [
     Customer(id: 'yubee', password: '123', name: '유비', phone: '010-1234-5678', email: 'yubee@naver.com', rnumber: '621004-1'),
     Customer(id: 'gwanwoo', password: '123', name: '관우', phone: '010-1234-5678', email: 'gwanwoo@naver.com', rnumber: '151104-1'),
-    Customer(id: 'jannbee', password: '123', name: '장비', phone: '010-1234-5678', email: 'jannbee@naver.com', rnumber: '830806-1'),
+    Customer(id: 'jangbee', password: '123', name: '장비', phone: '010-1234-5678', email: 'jannbee@naver.com', rnumber: '830806-1'),
     Customer(id: 'yeopho', password: '123', name: '여포', phone: '010-1234-5678', email: 'yeopho@naver.com', rnumber: '951114-1'),
     Customer(id: 'choseon', password: '123', name: '초선', phone: '010-1234-5678', email: 'choseon@naver.com', rnumber: '890715-2'),
     Customer(id: 'heonje', password: '123', name: '헌제', phone: '010-1234-5678', email: 'heonje@naver.com', rnumber: '000121-1'),
@@ -137,29 +141,34 @@ pressed3()async{
   for(Branch branches in branches){
       handler.insertBranch(branches);
   }
-    List<Customer> result = await (handler.queryCustomer());
+    List<Branch> result = await (handler.queryBranch());
     print(result);
 }
 
 pressed4()async{
-  List<Customer> customers = [
-    Customer(id: 'yubee', password: '123', name: '유비', phone: '010-1234-5678', email: 'yubee@naver.com', rnumber: '621004-1'),
-    Customer(id: 'gwanwoo', password: '123', name: '관우', phone: '010-1234-5678', email: 'gwanwoo@naver.com', rnumber: '151104-1'),
-    Customer(id: 'jannbee', password: '123', name: '장비', phone: '010-1234-5678', email: 'jannbee@naver.com', rnumber: '830806-1'),
-    Customer(id: 'yeopho', password: '123', name: '여포', phone: '010-1234-5678', email: 'yeopho@naver.com', rnumber: '951114-1'),
-    Customer(id: 'choseon', password: '123', name: '초선', phone: '010-1234-5678', email: 'choseon@naver.com', rnumber: '890715-2'),
-    Customer(id: 'heonje', password: '123', name: '헌제', phone: '010-1234-5678', email: 'heonje@naver.com', rnumber: '000121-1'),
-  ];
+  List<Order> orders = MadeOrderPsb().function() ;
 
-  for(Customer customer in customers){
-      handler.insertCustomer(customer);
+  for(Order order in orders){
+      handler.insertOrder(order);
   }
-    List<Customer> result = await (handler.queryCustomer());
-    print(result);
-
+    List<Order> result = await (handler.queryOrder());
+    print(result.length);
 }
 
 
+
+seqMaker(){
+  // DateTime now = DateTime.now();
+  // String nYour = now.year.toString();
+  // String nMonth = now.month.toString();
+  // String nDay= now.day.toString();
+  // String nHour = now.hour.toString();
+  // String nMinute = now.minute.toString();
+  // String nSec = now.second.toString();
+  // String nMiliSec = now.millisecond.toString();
+  // String nMicroSec = now.microsecond.toString();
+  // print(DateTime(2024, 8, 1, 14 , 30, 29).toString());
+}
 
 
 }//End

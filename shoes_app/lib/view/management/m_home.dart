@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
-import 'app_home.dart';
-import 'cart.dart';
-import 'orders.dart';
+import 'package:shoes_app/view/management/m_branch.dart';
+import 'package:shoes_app/view/management/m_customer.dart';
+import 'package:shoes_app/view/management/m_date.dart';
+import 'package:shoes_app/view/management/m_product.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class MHome extends StatefulWidget {
+  const MHome({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _MHomeState createState() => _MHomeState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MHomeState extends State<MHome> {
   int _selectedIndex = 0;
+
   static const List<Widget> _widgetOptions = <Widget>[
-    AppHome(),
-    CartPage(),
-    OrdersPage(),
+    MBranch(),
+    MDate(),
+    MCustomer(),
+    MProduct()
   ];
 
   void _onItemTapped(int index) {
@@ -32,15 +35,19 @@ class _HomePageState extends State<HomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: '홈',
+            label: '지점별',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: '장바구니',
+            icon: Icon(Icons.calendar_today),
+            label: '날짜별',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: '구매내역',
+            icon: Icon(Icons.person),
+            label: '손님별',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.production_quantity_limits),
+            label: '상품별',
           ),
         ],
         currentIndex: _selectedIndex,
