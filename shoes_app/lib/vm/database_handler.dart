@@ -101,9 +101,9 @@ Future<int> insertOrder(Order order) async {
       order.shoes_seq,
       order.order_seq,
       order.quantity,
-      order.paymenttime,
-      order.canceltime,
-      order.pickuptime
+      order.paymenttime.toString(),
+      order.canceltime.toString(),
+      order.pickuptime.toString()
     ],
   );
   return result;
@@ -157,7 +157,7 @@ Future<List<Customer>> queryCustomer() async {
 Future<List<Order>> queryOrder() async {
   final Database db = await initializeDB();
   final List<Map<String, Object?>> queryResult = await db.rawQuery(
-    'SELECT * FROM order',
+    'SELECT * FROM ordered',
   );
   return queryResult.map((e) => Order.fromMap(e)).toList();
 }
@@ -215,9 +215,9 @@ Future<int> updateOrder(Order order) async {
       order.shoes_seq,
       order.order_seq,
       order.quantity,
-      order.paymenttime,
-      order.canceltime,
-      order.pickuptime,
+      order.paymenttime.toString(),
+      order.canceltime.toString(),
+      order.pickuptime.toString(),
       order.seq
     ],
   );
