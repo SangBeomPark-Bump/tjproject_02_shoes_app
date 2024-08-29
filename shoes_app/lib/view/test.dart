@@ -56,6 +56,11 @@ class _TestState extends State<Test> {
                   pressed4();
                 },
                 child: const Text('주문')),
+            ElevatedButton(
+                onPressed: () {
+                  seqMaker();
+                },
+                child: const Text('프린트')),
           ],
         ),
       ),
@@ -74,13 +79,13 @@ class _TestState extends State<Test> {
     ];
     List<Shoes> shoes = [
       Shoes(
-          shoesname: 'Newbalance Red',
+          shoesname: 'Newb Red',
           price: 100000,
           image: imageList[0],
           size: 265,
           brand: 'newBalance'),
       Shoes(
-          shoesname: 'Newbalance White',
+          shoesname: 'Newb White',
           price: 100000,
           image: imageList[1],
           size: 255,
@@ -98,13 +103,13 @@ class _TestState extends State<Test> {
           size: 255,
           brand: 'NIKE'),
       Shoes(
-          shoesname: 'Prospecs Black',
+          shoesname: 'Prosp Black',
           price: 130000,
           image: imageList[4],
           size: 265,
           brand: 'prosPecs'),
       Shoes(
-          shoesname: 'Prospecs Red',
+          shoesname: 'Prosp Red',
           price: 130000,
           image: imageList[5],
           size: 255,
@@ -144,7 +149,7 @@ class _TestState extends State<Test> {
           email: 'gwanwoo@naver.com',
           rnumber: '151104-1'),
       Customer(
-          id: 'jannbee',
+          id: 'jangbee',
           password: '123',
           name: '장비',
           phone: '010-1234-5678',
@@ -190,60 +195,30 @@ class _TestState extends State<Test> {
     for (Branch branches in branches) {
       handler.insertBranch(branches);
     }
-    List<Customer> result = await (handler.queryCustomer());
+    List<Branch> result = await (handler.queryBranch());
     print(result);
   }
 
   pressed4() async {
-    List<Customer> customers = [
-      Customer(
-          id: 'yubee',
-          password: '123',
-          name: '유비',
-          phone: '010-1234-5678',
-          email: 'yubee@naver.com',
-          rnumber: '621004-1'),
-      Customer(
-          id: 'gwanwoo',
-          password: '123',
-          name: '관우',
-          phone: '010-1234-5678',
-          email: 'gwanwoo@naver.com',
-          rnumber: '151104-1'),
-      Customer(
-          id: 'jannbee',
-          password: '123',
-          name: '장비',
-          phone: '010-1234-5678',
-          email: 'jannbee@naver.com',
-          rnumber: '830806-1'),
-      Customer(
-          id: 'yeopho',
-          password: '123',
-          name: '여포',
-          phone: '010-1234-5678',
-          email: 'yeopho@naver.com',
-          rnumber: '951114-1'),
-      Customer(
-          id: 'choseon',
-          password: '123',
-          name: '초선',
-          phone: '010-1234-5678',
-          email: 'choseon@naver.com',
-          rnumber: '890715-2'),
-      Customer(
-          id: 'heonje',
-          password: '123',
-          name: '헌제',
-          phone: '010-1234-5678',
-          email: 'heonje@naver.com',
-          rnumber: '000121-1'),
-    ];
+    List<Order> orders = MadeOrderPsb().function();
 
-    for (Customer customer in customers) {
-      handler.insertCustomer(customer);
+    for (Order order in orders) {
+      handler.insertOrder(order);
     }
-    List<Customer> result = await (handler.queryCustomer());
-    print(result);
+    List<Order> result = await (handler.queryOrder());
+    print(result.length);
+  }
+
+  seqMaker() {
+    // DateTime now = DateTime.now();
+    // String nYour = now.year.toString();
+    // String nMonth = now.month.toString();
+    // String nDay= now.day.toString();
+    // String nHour = now.hour.toString();
+    // String nMinute = now.minute.toString();
+    // String nSec = now.second.toString();
+    // String nMiliSec = now.millisecond.toString();
+    // String nMicroSec = now.microsecond.toString();
+    // print(DateTime(2024, 8, 1, 14 , 30, 29).toString());
   }
 }//End
