@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shoes_app/vm/database_handler.dart';
 
 class Detail extends StatefulWidget {
   const Detail({super.key});
@@ -8,8 +12,29 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
-  final valueList = ["250", "255", "260", "265", "270"];
-  var selectValue = '260';
+  late DatabaseHandler handler;
+  late int? seq;
+  late String shoesname;
+  late int price;
+  late Uint8List image;
+  late int size;
+  late String brand;
+  var value = Get.arguments ?? "__";
+  int num = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    handler = DatabaseHandler();
+    seq = value[0];
+    shoesname = value[1];
+    price = value[2];
+    image = value[3];
+    size = value[4];
+    brand = value[5];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,36 +54,29 @@ class _DetailState extends State<Detail> {
                 width: MediaQuery.of(context).size.width,
                 height: 300,
                 color: Colors.grey,
-                // 이미지 메모리에서 가져옴
-                //Image.memory(snapshot.data![index].image,width: 100,),
+                child: Image.memory(
+                  image,
+                  width: 100,
+                ),
               ),
               Text(
-                '',
+                brand,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
               ),
               // 브랜드 값 가져옴
-              //Text(snapshot.data![index].brand)
               Text(
-                'Nike',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
-              ),
-              // 브랜드 값 가져옴
-              //Text(snapshot.data![index].brand)
-              Text(
-                'NIKE AIR MAX',
+                shoesname,
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               // 제품명 값 가져옴
-              //Text(snapshot.data![index].shoesname)
               Text(
-                '100,000원',
+                "${price.toString()}원",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.red),
               ),
               // 가격 값 가져옴
-              //Text(snapshot.data![index].price)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,23 +115,7 @@ class _DetailState extends State<Detail> {
                               ),
                             ),
                             // 가격 값 가져옴
-                            //Text(snapshot.data![index].price)
-                            // 신발 사이즈 선택 드랍다운 버튼
-                            DropdownButton(
-                              value: selectValue,
-                              items: valueList.map(
-                                (value) {
-                                  return DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                },
-                              ).toList(),
-                              onChanged: (value) {
-                                selectValue = value!;
-                                setState(() {});
-                              },
-                            ),
+                            Text("$size")
                           ],
                         ),
                       ],
@@ -130,14 +132,27 @@ class _DetailState extends State<Detail> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {});
+                                  if (num <= 0) {
+                                    num = 0;
+                                  } else {
+                                    num -= 1;
+                                  }
+                                },
                                 icon: Icon(
                                   Icons.remove,
-                                  color: Colors.blue,
+                                  color:
+                                      const Color.fromARGB(255, 122, 163, 195),
                                 )),
-                            Text('숫자'),
+                            Text("$num"), // 구매수량
                             IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {});
+                                  if (num >= 0) {
+                                    num += 1;
+                                  }
+                                },
                                 icon: Icon(
                                   Icons.add,
                                   color: Colors.red,

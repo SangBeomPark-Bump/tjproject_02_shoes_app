@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     AppHome(),
     CartPage(),
-    OrdersPage(),
+    Orders(),
   ];
 
   void _onItemTapped(int index) {
@@ -44,9 +44,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,  // 선택된 항목의 색상
-        unselectedItemColor: Colors.grey,  // 선택되지 않은 항목의 색상
-        backgroundColor: Colors.white,  // 네비게이션 바의 배경색
+        selectedItemColor: Colors.blue, // 선택된 항목의 색상
+        unselectedItemColor: Colors.grey, // 선택되지 않은 항목의 색상
+        backgroundColor: Colors.white, // 네비게이션 바의 배경색
         onTap: _onItemTapped,
       ),
     );
