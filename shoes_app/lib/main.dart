@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shoes_app/view/home.dart';
-import 'package:shoes_app/view/sign/sign_in.dart';
-import 'package:shoes_app/view/sign/sign_up.dart';
-import 'package:shoes_app/view/test.dart';
+import 'view/home.dart';
+import 'view/sign/sign_in.dart';
+import 'view/sign/sign_up.dart';
+import 'view/test.dart';
+import 'view/sign/sign_in.dart';
 
 void main() {
   runApp(const MyApp());
