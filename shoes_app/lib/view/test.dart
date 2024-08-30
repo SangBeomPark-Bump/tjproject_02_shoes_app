@@ -209,16 +209,10 @@ class _TestState extends State<Test> {
     print(result.length);
   }
 
-  seqMaker() {
-    // DateTime now = DateTime.now();
-    // String nYour = now.year.toString();
-    // String nMonth = now.month.toString();
-    // String nDay= now.day.toString();
-    // String nHour = now.hour.toString();
-    // String nMinute = now.minute.toString();
-    // String nSec = now.second.toString();
-    // String nMiliSec = now.millisecond.toString();
-    // String nMicroSec = now.microsecond.toString();
-    // print(DateTime(2024, 8, 1, 14 , 30, 29).toString());
+  seqMaker(){
+    Order order = Order(branch_branchcode: 2, customer_id: 'ff', shoes_seq: 3, order_seq: 1, quantity: 60, paymenttime: DateTime.now());
+    order.seqMaker();
+    print(order.seq);
   }
+
 }//End
