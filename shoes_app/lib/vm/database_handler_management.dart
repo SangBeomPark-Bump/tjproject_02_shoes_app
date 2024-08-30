@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:path/path.dart';
+import 'package:shoes_app/model/order.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Branch 클래스
@@ -58,58 +59,7 @@ class Customer {
   }
 }
 
-// Order 클래스
-class Order {
-  String? seq;
-  int? branch_branchcode;
-  String? customer_id;
-  int? shoes_seq;
-  int? order_seq;
-  int? quantity;
-  String? paymenttime;
-  String? canceltime;
-  String? pickuptime;
 
-  Order({
-    this.seq,
-    this.branch_branchcode,
-    this.customer_id,
-    this.shoes_seq,
-    this.order_seq,
-    this.quantity,
-    this.paymenttime,
-    this.canceltime,
-    this.pickuptime,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'seq': seq,
-      'branch_branchcode': branch_branchcode,
-      'customer_id': customer_id,
-      'shoes_seq': shoes_seq,
-      'order_seq': order_seq,
-      'quantity': quantity,
-      'paymenttime': paymenttime,
-      'canceltime': canceltime,
-      'pickuptime': pickuptime,
-    };
-  }
-
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
-      seq: map['seq'],
-      branch_branchcode: map['branch_branchcode'],
-      customer_id: map['customer_id'],
-      shoes_seq: map['shoes_seq'],
-      order_seq: map['order_seq'],
-      quantity: map['quantity'],
-      paymenttime: map['paymenttime'],
-      canceltime: map['canceltime'],
-      pickuptime: map['pickuptime'],
-    );
-  }
-}
 
 // Shoes 클래스
 class Shoes {
@@ -278,10 +228,6 @@ class DatabaseHandler {
   }
 
   // Order 관련 메서드들
-  Future<int> insertOrder(Order order) async {
-    final Database db = await initializeDB();
-    return await db.insert('ordered', order.toMap());
-  }
 
   Future<List<Order>> queryOrder() async {
     final Database db = await initializeDB();
@@ -289,15 +235,7 @@ class DatabaseHandler {
     return queryResult.map((e) => Order.fromMap(e)).toList();
   }
 
-  Future<int> updateOrder(Order order) async {
-    final Database db = await initializeDB();
-    return await db.update(
-      'ordered',
-      order.toMap(),
-      where: 'seq = ?',
-      whereArgs: [order.seq],
-    );
-  }
+
 
   // Shoes 관련 메서드들
   Future<int> insertShoe(Shoes shoes) async {
@@ -311,16 +249,24 @@ class DatabaseHandler {
     return queryResult.map((e) => Shoes.fromMap(e)).toList();
   }
 
-  Future<double?> getShoePrice(int shoesSeq) async {
-    final db = await initializeDB();
+
+  Future<double?> getShoePrice(int shoeSeq) async {
+    final Database db = await initializeDB();
     final List<Map<String, dynamic>> result = await db.query(
       'shoes',
+      columns: ['price'],
       where: 'seq = ?',
-      whereArgs: [shoesSeq],
+      whereArgs: [shoeSeq],
     );
+
     if (result.isNotEmpty) {
-      return result.first['price'] as double?;
+      final price = result.first['price'];
+      // 가격과 타입을 로그로 출력
+      print('Price for shoeSeq $shoeSeq: $price (type: ${price.runtimeType})');
+      // price가 int면 double로 변환하고, double이면 그대로 반환
+      return price is int ? price.toDouble() : price as double?;
     }
+
     return null;
   }
 

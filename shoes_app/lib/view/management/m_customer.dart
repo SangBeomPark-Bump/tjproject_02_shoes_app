@@ -11,10 +11,12 @@ class MCustomer extends StatefulWidget {
 
 class _MCustomerState extends State<MCustomer> {
   late DatabaseHandler handler;
-  List<Order> orders = []; // 초기화
-  List<Order> filteredOrders = []; // 초기화
+  List<Order> orders = [];
+  Map<String, List<Order>> groupedOrders = {};
   TextEditingController searchController = TextEditingController();
-  String selectedFilter = '고객 ID'; // 기본 검색 필터 설정
+  String selectedFilter = '고객 ID';
+  bool showPaymentAmount = false; // 결제 금액 표시 여부를 결정하는 변수
+  bool isSearching = false; // 검색 중인지 여부를 결정하는 변수
 
   @override
   void initState() {
@@ -24,27 +26,57 @@ class _MCustomerState extends State<MCustomer> {
   }
 
   Future<void> _loadOrders() async {
-    orders = await handler.queryOrder();
-    filteredOrders = orders;
-    setState(() {});
+    try {
+      orders = await handler.queryOrder();
+      _groupOrdersByCustomerId();
+      setState(() {});
+    } catch (e) {
+      print("Error loading orders: $e");
+    }
+  }
+
+  void _groupOrdersByCustomerId() {
+    groupedOrders = {};
+    for (var order in orders) {
+      String? customerId = order.customer_id;
+      if (customerId != null) {
+        if (groupedOrders.containsKey(customerId)) {
+          groupedOrders[customerId]!.add(order);
+        } else {
+          groupedOrders[customerId] = [order];
+        }
+      }
+    }
   }
 
   void _filterOrders(String query) {
-    setState(() {
-      filteredOrders = orders.where((order) {
+    final filteredOrders = <String, List<Order>>{};
+
+    groupedOrders.forEach((key, value) {
+      final filteredList = <Order>[];
+
+      for (var order in value) {
+        bool matches = false;
         switch (selectedFilter) {
           case '고객 ID':
-            return order.customer_id.contains(query);
+            matches = order.customer_id?.contains(query) ?? false;
+            break;
           case '제품명':
-            return true; // 제품명 검색은 아래에서 처리
-          case '결제 날짜':
-            return order.paymenttime.toString().contains(query);
-          case '지점명':
-            return true; // 지점명 검색은 아래에서 처리
-          default:
-            return false;
+            matches = order.shoes_seq.toString().contains(query);
+            break;
         }
-      }).toList();
+        if (matches) {
+          filteredList.add(order);
+        }
+      }
+
+      if (filteredList.isNotEmpty) {
+        filteredOrders[key] = filteredList;
+      }
+    });
+
+    setState(() {
+      groupedOrders = filteredOrders;
     });
   }
 
@@ -53,130 +85,220 @@ class _MCustomerState extends State<MCustomer> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("고객관리"),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: DropdownButton<String>(
-                        value: selectedFilter,
-                        items: <String>['고객 ID', '제품명', '결제 날짜', '지점명'].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedFilter = value!;
-                            searchController.clear(); // 필터 변경 시 검색어 초기화
-                            _filterOrders(''); // 초기화된 검색어로 다시 필터링
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      flex: 5,
-                      child: TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          labelText: '검색',
-                          hintText: '$selectedFilter 검색',
-                          prefixIcon: const Icon(Icons.search),
-                          border: const OutlineInputBorder(),
-                        ),
-                        onChanged: _filterOrders,
-                      ),
-                    ),
-                  ],
+        actions: [
+          if (!isSearching)
+            Row(
+              children: [
+                Switch(
+                  value: showPaymentAmount,
+                  onChanged: (value) {
+                    setState(() {
+                      showPaymentAmount = value;
+                      _groupOrdersByCustomerId(); // 스위치를 켜거나 끌 때 데이터를 다시 그룹화
+                    });
+                  },
                 ),
+                const Text('결제 금액 보기'),
+              ],
+            ),
+          IconButton(
+            icon: Icon(isSearching ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                isSearching = !isSearching;
+                if (!isSearching) {
+                  searchController.clear();
+                  _filterOrders(''); // 검색 종료 시 모든 항목 표시
+                }
+              });
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          if (isSearching)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: '$selectedFilter 검색',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        prefixIcon: const Icon(Icons.search),
+                      ),
+                      onChanged: _filterOrders,
+                      autofocus: true,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  DropdownButton<String>(
+                    value: selectedFilter,
+                    items: <String>['고객 ID', '제품명']
+                        .map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedFilter = value!;
+                        searchController.clear();
+                        _filterOrders('');
+                      });
+                    },
+                  ),
+                ],
               ),
-              if (filteredOrders.isEmpty)
-                const Center(
-                  child: Text('검색된 데이터가 없습니다.'),
-                )
-              else
+            ),
+          Expanded(
+            child: ListView(
+              children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text('고객 ID')),
-                      DataColumn(label: Text('성별')),
-                      DataColumn(label: Text('나이')),
-                      DataColumn(label: Text('제품명')),
-                      DataColumn(label: Text('결제 시간')),
-                      DataColumn(label: Text('지점명')),
-                      DataColumn(label: Text('총매출')),
+                    columns: [
+                      const DataColumn(label: Text('고객 ID')),
+                      const DataColumn(label: Text('성별')),
+                      const DataColumn(label: Text('나이')),
+                      const DataColumn(label: Text('제품명')),
+                      if (showPaymentAmount)
+                        const DataColumn(label: Text('총 결제 금액')), // 결제 금액 열 추가
                     ],
-                    rows: filteredOrders.map((order) {
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(order.customer_id)), // 고객 ID
-                          DataCell(Text(_calculateGender(order.customer_id))), // 성별 계산
-                          DataCell(Text(_calculateAge(order.customer_id))), // 나이 계산
-                          DataCell(FutureBuilder<String?>(
-                            future: handler.getShoeName(order.shoes_seq), // 신발 이름 가져오기
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return const Text('Unknown Product');
-                              } else {
-                                return Text(snapshot.data ?? 'Unknown Product');
-                              }
-                            },
-                          )),
-                          DataCell(Text(order.paymenttime.toString())), // 결제 시간
-                          DataCell(FutureBuilder<String?>(
-                            future: handler.getBranchName(order.branch_branchcode), // 지점명 가져오기
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return const Text('Unknown Branch');
-                              } else {
-                                return Text(snapshot.data ?? 'Unknown Branch');
-                              }
-                            },
-                          )),
-                          DataCell(FutureBuilder<double?>(
-                            future: _calculateTotalSales(order), // 총매출 계산
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return const Text('0.0');
-                              } else {
-                                return Text(snapshot.data?.toStringAsFixed(2) ?? '0.00');
-                              }
-                            },
-                          )),
-                        ],
-                      );
-                    }).toList(),
+                    rows: showPaymentAmount
+                        ? [
+                            for (var entry in groupedOrders.entries)
+                              _buildGroupedDataRow(entry.key, entry.value),
+                          ]
+                        : [
+                            for (var entry in groupedOrders.entries)
+                              for (var order in entry.value)
+                                _buildIndividualDataRow(entry.key, order),
+                          ],
                   ),
                 ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // 총매출 계산 함수 (주문 항목 별로 가격을 곱하여 합산)
-  Future<double> _calculateTotalSales(Order order) async {
-    final double? price = await handler.getShoePrice(order.shoes_seq);
-    return (price ?? 0.0) * order.quantity;
+  DataRow _buildGroupedDataRow(String customerId, List<Order> customerOrders) {
+    return DataRow(
+      cells: [
+        DataCell(Text(customerId)),
+        DataCell(Text(_calculateGender(customerId))),
+        DataCell(Text(_calculateAge(customerId))),
+        DataCell(
+          FutureBuilder<String>(
+            future: _getProductNamesWithQuantities(customerOrders),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError || !snapshot.hasData) {
+                return const Text('Error');
+              } else {
+                return Text(snapshot.data!);
+              }
+            },
+          ),
+        ),
+        DataCell(
+          FutureBuilder<double>(
+            future: _calculateTotalAmount(customerOrders),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError || !snapshot.hasData) {
+                return Text('0 원');  // 오류 발생 시 기본값을 0원으로 설정
+              } else {
+                return Text('${snapshot.data!.toStringAsFixed(2)} 원');
+              }
+            },
+          ),
+        ),
+      ],
+    );
   }
 
-  // 성별 계산 함수 (예제)
+  DataRow _buildIndividualDataRow(String customerId, Order order) {
+    return DataRow(
+      cells: [
+        DataCell(Text(customerId)),
+        DataCell(Text(_calculateGender(customerId))),
+        DataCell(Text(_calculateAge(customerId))),
+        DataCell(
+          FutureBuilder<String?>(
+            future: handler.getShoeName(order.shoes_seq), // 제품명을 데이터베이스에서 가져옴
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError || !snapshot.hasData) {
+                return const Text('Error');
+              } else {
+                return Text('${snapshot.data ?? 'Unknown'} x ${order.quantity}');
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<String> _getProductNamesWithQuantities(List<Order> customerOrders) async {
+    final Map<String, int> productCounts = {};
+
+    for (var order in customerOrders) {
+      try {
+        String? productName = await handler.getShoeName(order.shoes_seq);
+        if (productName != null) {
+          if (productCounts.containsKey(productName)) {
+            productCounts[productName] = productCounts[productName]! + order.quantity;
+          } else {
+            productCounts[productName] = order.quantity;
+          }
+        }
+      } catch (e) {
+        print("Error getting product name: $e");
+      }
+    }
+
+    return productCounts.entries
+        .map((entry) => '${entry.key} x ${entry.value}개')
+        .join(', ');
+  }
+
+Future<double> _calculateTotalAmount(List<Order> customerOrders) async {
+    double totalAmount = 0.0;
+    for (var order in customerOrders) {
+        try {
+            final dynamic price = await handler.getShoePrice(order.shoes_seq);  // 가격을 DB에서 가져옴
+
+            // 타입에 따라 처리
+            if (price is int) {
+                totalAmount += order.quantity * price.toDouble(); // int 타입을 double로 변환
+            } else if (price is double) {
+                totalAmount += order.quantity * price; // double 타입은 그대로 사용
+            } else {
+                print("Unexpected price type: $price");
+            }
+        } catch (e) {
+            print("Error calculating total amount: $e");
+            totalAmount += 0;  // 오류 발생 시 합산에 0을 추가
+        }
+    }
+    return totalAmount;
+}
+
+
   String _calculateGender(String customerId) {
     try {
       return customerId.endsWith('1') || customerId.endsWith('3') ? '남성' : '여성';
@@ -185,7 +307,6 @@ class _MCustomerState extends State<MCustomer> {
     }
   }
 
-  // 나이 계산 함수 (예제)
   String _calculateAge(String customerId) {
     try {
       String birthYear = '19' + customerId.substring(0, 2);
