@@ -76,7 +76,7 @@ class MadeOrderPsb{
           name: '관우',
           phone: '010-1234-5678',
           email: 'gwanwoo@naver.com',
-          rnumber: '151104-1'),
+          rnumber: '151104-3'),
       Customer(
           id: 'jangbee',
           password: '123',
@@ -105,6 +105,13 @@ class MadeOrderPsb{
           phone: '010-1234-5678',
           email: 'heonje@naver.com',
           rnumber: '000121-1'),
+      Customer(
+          id: 'gyenhui',
+          password: '123',
+          name: '견희',
+          phone: '010-1234-5678',
+          email: 'gyenhui@naver.com',
+          rnumber: '020402-4'),
     ];
     return customers;
   }
@@ -124,14 +131,14 @@ class MadeOrderPsb{
   
   List<Order>order(){
 
-    List<String> nameList = ['yubee','gwanwoo','jangbee','yeopho','choseon','heonje'];
+    List<String> nameList = ['yubee','gwanwoo','jangbee','yeopho','choseon','heonje','gyenhui'];
 
     List<Order> orderList = [   ];
     for (int i = 0; i<10; i++){
       DateTime paymenttime = DateTime(2024, 8, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
       orderList.add(Order(
         branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(6)], 
+        customer_id: nameList[random.nextInt(7)], 
         shoes_seq: random.nextInt(6)+1, 
         order_seq: 1, 
         quantity: random.nextInt(10)+1,
@@ -144,7 +151,7 @@ class MadeOrderPsb{
       DateTime paymenttime = DateTime(2024, 7, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
       orderList.add(Order(
         branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(6)], 
+        customer_id: nameList[random.nextInt(7)], 
         shoes_seq: random.nextInt(6)+1, 
         order_seq: 1, 
         quantity: random.nextInt(10)+1,
@@ -157,7 +164,7 @@ class MadeOrderPsb{
       DateTime paymenttime = DateTime(2024, 8, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
       orderList.add(Order(
         branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(6)], 
+        customer_id: nameList[random.nextInt(7)], 
         shoes_seq: random.nextInt(6)+1, 
         order_seq: 1, 
         quantity: random.nextInt(10)+1,
@@ -171,7 +178,7 @@ class MadeOrderPsb{
       DateTime paymenttime = DateTime(2024, 7, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
       orderList.add(Order(
         branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(6)], 
+        customer_id: nameList[random.nextInt(7)], 
         shoes_seq: random.nextInt(6)+1, 
         order_seq: 1, 
         quantity: random.nextInt(10)+1,

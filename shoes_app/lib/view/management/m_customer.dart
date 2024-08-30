@@ -220,7 +220,7 @@ class _MCustomerState extends State<MCustomer> {
               } else if (snapshot.hasError || !snapshot.hasData) {
                 return Text('0 원');  // 오류 발생 시 기본값을 0원으로 설정
               } else {
-                return Text('${snapshot.data!.toStringAsFixed(2)} 원');
+                return Text('${snapshot.data!.toStringAsFixed(0)} 원');
               }
             },
           ),
