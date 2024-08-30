@@ -35,8 +35,8 @@ class _MDateState extends State<MDate> {
     try {
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
         SELECT strftime('%Y-%m-%d', paymenttime) as date, 
-               strftime('%m', paymenttime) as month,
-               SUM(quantity) as total_sales
+              strftime('%m', paymenttime) as month,
+              SUM(quantity) as total_sales
         FROM ordered
         WHERE strftime('%m', paymenttime) = ?
         GROUP BY date
@@ -136,7 +136,7 @@ class _MDateState extends State<MDate> {
                     title: ChartTitle(text: '월별 매출 데이터'),
                     legend: Legend(isVisible: true),
                     tooltipBehavior: TooltipBehavior(enable: true),
-                    series: <ChartSeries>[
+                    series: <CartesianSeries>[
                       ColumnSeries<_SalesData, String>(
                         dataSource: salesData,
                         xValueMapper: (_SalesData sales, _) => sales.date,

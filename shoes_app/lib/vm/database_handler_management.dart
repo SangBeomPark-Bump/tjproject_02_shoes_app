@@ -1,149 +1,11 @@
 import 'dart:typed_data';
 import 'package:path/path.dart';
+import 'package:shoes_app/model/branch.dart';
+import 'package:shoes_app/model/customer.dart';
+import 'package:shoes_app/model/order.dart';
+import 'package:shoes_app/model/shoes.dart';
 import 'package:sqflite/sqflite.dart';
 
-// Branch 클래스
-class Branch {
-  int? branchcode;
-  String? branchname;
-
-  Branch({this.branchcode, this.branchname});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'branchcode': branchcode,
-      'branchname': branchname,
-    };
-  }
-
-  factory Branch.fromMap(Map<String, dynamic> map) {
-    return Branch(
-      branchcode: map['branchcode'],
-      branchname: map['branchname'],
-    );
-  }
-}
-
-// Customer 클래스
-class Customer {
-  String? id;
-  String? password;
-  String? name;
-  String? phone;
-  String? email;
-  String? rnumber;
-
-  Customer({this.id, this.password, this.name, this.phone, this.email, this.rnumber});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'password': password,
-      'name': name,
-      'phone': phone,
-      'email': email,
-      'rnumber': rnumber,
-    };
-  }
-
-  factory Customer.fromMap(Map<String, dynamic> map) {
-    return Customer(
-      id: map['id'],
-      password: map['password'],
-      name: map['name'],
-      phone: map['phone'],
-      email: map['email'],
-      rnumber: map['rnumber'],
-    );
-  }
-}
-
-// Order 클래스
-class Order {
-  String? seq;
-  int? branch_branchcode;
-  String? customer_id;
-  int? shoes_seq;
-  int? order_seq;
-  int? quantity;
-  String? paymenttime;
-  String? canceltime;
-  String? pickuptime;
-
-  Order({
-    this.seq,
-    this.branch_branchcode,
-    this.customer_id,
-    this.shoes_seq,
-    this.order_seq,
-    this.quantity,
-    this.paymenttime,
-    this.canceltime,
-    this.pickuptime,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'seq': seq,
-      'branch_branchcode': branch_branchcode,
-      'customer_id': customer_id,
-      'shoes_seq': shoes_seq,
-      'order_seq': order_seq,
-      'quantity': quantity,
-      'paymenttime': paymenttime,
-      'canceltime': canceltime,
-      'pickuptime': pickuptime,
-    };
-  }
-
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
-      seq: map['seq'],
-      branch_branchcode: map['branch_branchcode'],
-      customer_id: map['customer_id'],
-      shoes_seq: map['shoes_seq'],
-      order_seq: map['order_seq'],
-      quantity: map['quantity'],
-      paymenttime: map['paymenttime'],
-      canceltime: map['canceltime'],
-      pickuptime: map['pickuptime'],
-    );
-  }
-}
-
-// Shoes 클래스
-class Shoes {
-  int? seq;
-  String? shoesname;
-  int? price;
-  Uint8List? image;
-  int? size;
-  String? brand;
-
-  Shoes({this.seq, this.shoesname, this.price, this.image, this.size, this.brand});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'seq': seq,
-      'shoesname': shoesname,
-      'price': price,
-      'image': image,
-      'size': size,
-      'brand': brand,
-    };
-  }
-
-  factory Shoes.fromMap(Map<String, dynamic> map) {
-    return Shoes(
-      seq: map['seq'],
-      shoesname: map['shoesname'],
-      price: map['price'],
-      image: map['image'],
-      size: map['size'],
-      brand: map['brand'],
-    );
-  }
-}
 
 // DatabaseHandler 클래스
 class DatabaseHandler {
@@ -200,10 +62,10 @@ class DatabaseHandler {
   }
 
   // Branch 관련 메서드들
-  Future<int> insertBranch(Branch branch) async {
-    final Database db = await initializeDB();
-    return await db.insert('branch', branch.toMap());
-  }
+  // Future<int> insertBranch(Branch branch) async {
+  //   final Database db = await initializeDB();
+  //   return await db.insert('branch', branch.toMap());
+  // }
 
   Future<List<Branch>> queryBranch() async {
     final Database db = await initializeDB();
@@ -224,21 +86,21 @@ class DatabaseHandler {
     return null;
   }
 
-  Future<int> updateBranch(Branch branch) async {
-    final Database db = await initializeDB();
-    return await db.update(
-      'branch',
-      branch.toMap(),
-      where: 'branchcode = ?',
-      whereArgs: [branch.branchcode],
-    );
-  }
+  // Future<int> updateBranch(Branch branch) async {
+  //   final Database db = await initializeDB();
+  //   return await db.update(
+  //     'branch',
+  //     branch.toMap(),
+  //     where: 'branchcode = ?',
+  //     whereArgs: [branch.branchcode],
+  //   );
+  // }
 
   // Customer 관련 메서드들
-  Future<int> insertCustomer(Customer customer) async {
-    final Database db = await initializeDB();
-    return await db.insert('customer', customer.toMap());
-  }
+  // Future<int> insertCustomer(Customer customer) async {
+  //   final Database db = await initializeDB();
+  //   return await db.insert('customer', customer.toMap());
+  // }
 
   Future<List<Customer>> queryCustomer() async {
     final Database db = await initializeDB();
@@ -267,21 +129,21 @@ class DatabaseHandler {
     return null;
   }
 
-  Future<int> updateCustomer(Customer customer) async {
-    final Database db = await initializeDB();
-    return await db.update(
-      'customer',
-      customer.toMap(),
-      where: 'id = ?',
-      whereArgs: [customer.id],
-    );
-  }
+  // Future<int> updateCustomer(Customer customer) async {
+  //   final Database db = await initializeDB();
+  //   return await db.update(
+  //     'customer',
+  //     customer.toMap(),
+  //     where: 'id = ?',
+  //     whereArgs: [customer.id],
+  //   );
+  // }
 
   // Order 관련 메서드들
-  Future<int> insertOrder(Order order) async {
-    final Database db = await initializeDB();
-    return await db.insert('ordered', order.toMap());
-  }
+  // Future<int> insertOrder(Order order) async {
+  //   final Database db = await initializeDB();
+  //   return await db.insert('ordered', order.toMap());
+  // }
 
   Future<List<Order>> queryOrder() async {
     final Database db = await initializeDB();
@@ -289,21 +151,21 @@ class DatabaseHandler {
     return queryResult.map((e) => Order.fromMap(e)).toList();
   }
 
-  Future<int> updateOrder(Order order) async {
-    final Database db = await initializeDB();
-    return await db.update(
-      'ordered',
-      order.toMap(),
-      where: 'seq = ?',
-      whereArgs: [order.seq],
-    );
-  }
+  // Future<int> updateOrder(Order order) async {
+  //   final Database db = await initializeDB();
+  //   return await db.update(
+  //     'ordered',
+  //     order.toMap(),
+  //     where: 'seq = ?',
+  //     whereArgs: [order.seq],
+  //   );
+  // }
 
   // Shoes 관련 메서드들
-  Future<int> insertShoe(Shoes shoes) async {
-    final Database db = await initializeDB();
-    return await db.insert('shoes', shoes.toMap());
-  }
+  // Future<int> insertShoe(Shoes shoes) async {
+  //   final Database db = await initializeDB();
+  //   return await db.insert('shoes', shoes.toMap());
+  // }
 
   Future<List<Shoes>> queryShoes() async {
     final Database db = await initializeDB();
@@ -337,13 +199,13 @@ class DatabaseHandler {
     return null;
   }
 
-  Future<int> updateShoe(Shoes shoe) async {
-    final Database db = await initializeDB();
-    return await db.update(
-      'shoes',
-      shoe.toMap(),
-      where: 'seq = ?',
-      whereArgs: [shoe.seq],
-    );
-  }
+  // Future<int> updateShoe(Shoes shoe) async {
+  //   final Database db = await initializeDB();
+  //   return await db.update(
+  //     'shoes',
+  //     shoe.toMap(),
+  //     where: 'seq = ?',
+  //     whereArgs: [shoe.seq],
+  //   );
+  // }
 }

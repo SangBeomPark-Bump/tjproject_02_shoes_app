@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/view/management/m_home.dart';
@@ -20,6 +21,8 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
   int isExist = 0; 
   final box = GetStorage();
+  final _adminid = 'admin';
+  final _adminpassword = '2424';
 
 
   @override
@@ -93,13 +96,8 @@ class _SignInPageState extends State<SignInPage> {
                     isExist = 0;
                     setState(() {});
                     _submitForm(context);
-                    if (isExist !=0){
-            
-                    } else{
-                      setState(() {});
-                    }
                   },
-                  child: const Text('Customer'),
+                  child: const Text('Sign in'),
                 ),
                 const SizedBox(height: 20), // 버튼 간의 간격 조정
             //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,12 +133,17 @@ class _SignInPageState extends State<SignInPage> {
 
 
     void _submitForm(context)async {
-      isExist = await DatabaseSignUpHandler().idPasswordCustomer(_idController.text.trim(), _passwordController.text.trim());  
-      setState(() {});
-    if (_formKey.currentState!.validate()) {
-      // 모든 입력이 유효할 경우
-      box.write('userId', _idController.text.trim());
-      _showEnterDialog(context);
+    if (_idController.text.trim() == 'admin' && _passwordController.text.trim() == '123'){
+      Get.back();
+      Get.to(() => const MHome());
+    }else{
+        isExist = await DatabaseSignUpHandler().idPasswordCustomer(_idController.text.trim(), _passwordController.text.trim());  
+        setState(() {});
+      if (_formKey.currentState!.validate()) {
+        // 모든 입력이 유효할 경우
+        box.write('userId', _idController.text.trim());
+        _showEnterDialog(context);
+      }
     }
     
   }
@@ -170,6 +173,30 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  void _showEnterMDialog(BuildContext context) {
+    String userId = box.read('userId');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('로그인'),
+          content: Text('환영합니다! $userId 님!' ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 대화 상자 닫기
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()), // SignInPage로 이동
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 
 
