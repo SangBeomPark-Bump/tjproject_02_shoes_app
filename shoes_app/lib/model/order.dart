@@ -15,7 +15,6 @@ class Order{
   DateTime? canceltime;
   DateTime? pickuptime;
 
-
   Order({
     required this.branch_branchcode,
     required this.customer_id,
@@ -28,7 +27,6 @@ class Order{
   });
   
   seqMaker(){
-
     String seqYear = paymenttime.year.toRadixString(16).padLeft(3, '0');
     String seqDayMonth = (paymenttime.month+paymenttime.day * 932).toRadixString(16).padLeft(4, '0');
     String seqHourMinute = (paymenttime.hour+paymenttime.minute * 289).toRadixString(16).padLeft(4, '0');
@@ -36,7 +34,6 @@ class Order{
     String seqMili = (paymenttime.millisecond * 65).toRadixString(16).padLeft(4, '0');
     String seqMicro = (paymenttime.microsecond * 63).toRadixString(16).padLeft(4, '0');
     seq = seqYear + seqDayMonth + seqHourMinute + customer_id[0]+ customer_id[1]; seqSec + seqMili + seqMicro + order_seq.toString();
-    
   }
 
   Order.fromMap(Map<String, dynamic> res)
