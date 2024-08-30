@@ -30,6 +30,7 @@ class _DetailState extends State<Detail> {
   late List<Uint8List> wishImage; 
   late List<int> wishSize; 
   late List<String> wishBrand;
+  late List<int> wishNum;
 
   @override
   void initState() {
@@ -43,12 +44,17 @@ class _DetailState extends State<Detail> {
     brand = value[5] as String;
 
     //장바구니 담은 목록 가져오기
-    wishSeq = box.read<List<int>>('wishSeq') ?? []; 
+    readBox();
+
+  }
+  readBox(){
+        wishSeq = box.read<List<int>>('wishSeq') ?? []; 
     wishShoesname = box.read<List<String>>('wishShoesname') ?? []; 
     wishPrice = box.read<List<int>>('wishPrice') ?? [];
     wishImage = box.read<List<Uint8List>>('wishImage') ?? [];
     wishSize = box.read<List<int>>('wishSize') ?? [];
     wishBrand = box.read<List<String>>('wishBrand') ?? [];
+    wishNum = box.read<List<int>>('wishNum') ?? [];
   }
 
   @override
@@ -176,8 +182,10 @@ class _DetailState extends State<Detail> {
                       SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
+                          if(num!=0){
                           addToCart();
                           Get.back();
+                          }else{}
                         },
                         child: Text('장바구니 담기',
                             style: TextStyle(color: Colors.black87)),
@@ -207,6 +215,7 @@ class _DetailState extends State<Detail> {
     wishImage.add(image);
     wishSize.add(size);
     wishBrand.add(brand);
+    wishNum.add(num);
     saveStorage();
   }
 
@@ -218,5 +227,8 @@ class _DetailState extends State<Detail> {
     box.write('wishImage', wishImage);
     box.write('wishSize', wishSize);
     box.write('wishBrand', wishBrand);
+    box.write('wishNum', wishNum);
   }
+
+
 }

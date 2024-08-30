@@ -1,9 +1,16 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shoes_app/model/order.dart';
+import 'package:shoes_app/view/detail.dart';
+import 'package:shoes_app/view/home.dart';
+import 'package:shoes_app/view/orders.dart';
+import 'package:shoes_app/vm/database_cart_handler.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -13,7 +20,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartState extends State<CartPage> {
-  late List<String> item; //지점 dropdownbutton 리스트 
+  //지점 dropdownbutton 리스트 
+  late List<String> item;
   late String dropdownValue; // dropdownbutton 선택
   final box = GetStorage(); // get Stroage
   late List<int> wishSeq; //제품번호 리스트 ??
@@ -22,13 +30,23 @@ class _CartState extends State<CartPage> {
   late List<Uint8List> wishImage; //장바구니 신발 이미지
   late List<int> wishSize; //장바구니 신발 사이즈
   late List<String> wishBrand; // 장바구니 신발 브랜드
+  late List<int> wishQuantity; //장바구니 수량
+  late int wishOrderseq; //order_seq 
+  // final userbox = GetStorage();
+  DatabaseCarthandler carthandler = DatabaseCarthandler(); //장바구니용 handler
+
+
+
 
   @override
   void initState() {
     super.initState();
     item = ["강남점", "신도림점", "노원점"];
     dropdownValue = "강남점";
-
+    wishOrderseq=1;
+    readcartBox();
+  }
+  readcartBox(){
     // GetStorage에서 장바구니 데이터 읽어오기
     wishSeq = box.read<List<int>>('wishSeq') ?? [];
     wishShoesname = box.read<List<String>>('wishShoesname') ?? [];
@@ -36,7 +54,9 @@ class _CartState extends State<CartPage> {
     wishImage = box.read<List<Uint8List>>('wishImage') ?? [];
     wishSize = box.read<List<int>>('wishSize') ?? [];
     wishBrand = box.read<List<String>>('wishBrand') ?? [];
+    wishQuantity = box.read<List<int>>('wishQuantity') ?? [] ;
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -78,21 +98,72 @@ class _CartState extends State<CartPage> {
             child: ListView.builder(
               itemCount: wishSeq.length,
               itemBuilder: (context, index) {
-                return Card(
-                  child: Row(
-                    children: [
-                      Image.memory(wishImage[index], width: 70),
-                      Expanded(
-                        child: Column(
+                return Slidable(
+                  endActionPane: ActionPane(
+                    motion: const BehindMotion(),
+                  children: [
+                    SlidableAction(
+                      backgroundColor: Colors.red,
+                      icon: Icons.delete,
+                      onPressed: (context) {
+                        deleteDialog1(index,wishShoesname[index]);
+                      },
+                      )
+                  ]
+                  ),
+                  child: Card(
+                    child: Row(
+                      children: [
+                        Image.memory(wishImage[index], width: 120), //신발 이미지
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(wishShoesname[index]),
-                            Text("Size: ${wishSize[index]}"),
-                            Text("${wishPrice[index]}₩")
+                            Text(wishShoesname[index], //신발 이름
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20
+                            ),
+                            ),
+                            Text("Size: ${wishSize[index]}"), //사이즈
+                            Text("${wishPrice[index] * wishQuantity[index]}₩",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20
+                            ),
+                            ) //가격
                           ],
                         ),
-                      ),
-                    ],
+                            Column(
+                              children: [
+                                ElevatedButton( //신발 수량 -
+                                  onPressed: () {
+                                  if(wishQuantity[index]>1){
+                                    wishQuantity[index]--;
+                                  }setState(() {});
+                                }, 
+                                child: const Icon(Icons.remove)
+                                ),
+                                
+                                Text("수량 : ${wishQuantity[index]}",
+                                style: const TextStyle(
+                                  fontSize: 15
+                                ),
+                                ), //신발 수량
+                                
+                                ElevatedButton( //신발 수량 +
+                                  onPressed: () {
+                                  if(wishQuantity[index]<=4){
+                                    wishQuantity[index]++;
+                                    setState(() {});
+                                  }
+                                },
+                                  child: const Icon(Icons.add)
+                                ),
+                              ],
+                            ),
+
+                      ],
+                    ),
                   ),
                 );
               },
@@ -106,6 +177,7 @@ class _CartState extends State<CartPage> {
                 child: 
                 ElevatedButton( //구매 버튼
                   onPressed: () {
+                    wishSeq.isEmpty ? erorrSnackBar() :
                     purchaseDialog(); //구매 확인 다이얼로그
                   },
                   child: const Text("구매"),
@@ -113,7 +185,7 @@ class _CartState extends State<CartPage> {
               ),
               ElevatedButton( //취소 버튼
                 onPressed: () {
-                  // 취소 버튼 기능 미정
+                  
                 },
                 child: const Text('취소'),
               ),
@@ -124,6 +196,8 @@ class _CartState extends State<CartPage> {
     );
   }
 
+
+//구매 다이얼로그
   purchaseDialog() {
     Get.defaultDialog(
       title: "구매 하시겠습니까?",
@@ -134,7 +208,10 @@ class _CartState extends State<CartPage> {
         TextButton(
           onPressed: () {
             // 구매 처리 로직
+            cartInsertOrder();
+            deleteCart();
             Get.back(); // 다이얼로그 닫기
+            Get.back();
           },
           child: const Text('예'),
         ),
@@ -147,4 +224,93 @@ class _CartState extends State<CartPage> {
       ],
     );
   }
+
+//장바구니 선택 삭제
+selectedDelete(index){
+  wishSeq.removeAt(index);
+  wishShoesname.removeAt(index);
+  wishSize.removeAt(index);
+  wishImage.removeAt(index);
+  wishQuantity.removeAt(index);
+  wishBrand.removeAt(index);
+  wishPrice.removeAt(index);
+  setState(() {
+  });
 }
+//장바구니 구매후 초기화
+deleteCart(){
+  String id = box.read('userId');
+  box.erase();
+  box.write("userId",id);
+  setState(() {
+    
+  });
+}
+
+
+
+
+//구매 다이얼로그 클릭시 order테이블 저장
+  cartInsertOrder(){
+    for(int i=0 ; i <= wishSeq.length-1 ; i++){
+      Order orders = Order(
+        branch_branchcode:
+        dropdownValue == "강남점" ? 1 : dropdownValue == "신도림점" ? 2 : 3, 
+        // dropdown 수정 or if문
+        customer_id: box.read('userId'), 
+        shoes_seq: wishSeq[i],
+        order_seq: wishOrderseq++, 
+        quantity: wishQuantity[i], 
+        paymenttime: DateTime.now()
+        );
+        orders.seqMaker();
+        carthandler.insertOrder(orders);
+      
+    }
+  }
+
+
+
+
+
+
+
+//삭제 다이얼로그
+deleteDialog1(index,title){
+  Get.defaultDialog(
+    title: title,
+    middleText: '항목을 삭제 하시겠습니까?',
+    actions: [
+      TextButton(
+        onPressed: () => Get.back(), 
+        child: const Text('취소')
+        ),
+      TextButton(
+        onPressed: () {
+          selectedDelete(index);
+          setState(() {});
+          Get.back();
+        },
+        child: const Text('삭제')
+        )
+    ]
+  );
+}
+
+//장바구니 없이 그냥 클릭
+erorrSnackBar(){ //get package SnackBar
+  Get.snackbar(
+  "경고",
+  "담은 물건이 없습니다.",
+  snackPosition: SnackPosition.BOTTOM,   //기본값 = top
+  duration: const Duration(seconds: 2),
+  backgroundColor: Theme.of(context).colorScheme.error,
+  colorText: Theme.of(context).colorScheme.onError
+  );
+}
+
+
+
+
+
+}//End
