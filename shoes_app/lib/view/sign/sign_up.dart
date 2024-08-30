@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shoes_app/model/customer.dart';
 import 'package:shoes_app/view/sign/sign_in.dart'; // SignInPage 경로에 맞게 수정하세요
-import 'package:flutter/services.dart'; // inputFormatters를 사용하기 위해 필요
+import 'package:flutter/services.dart';
+import 'package:shoes_app/vm/database_sign_up_handler.dart'; // inputFormatters를 사용하기 위해 필요
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -11,6 +13,9 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
+  int isIdDup = 0;
+
+  final _handler = DatabaseSignUpHandler();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
@@ -107,26 +112,38 @@ class _SignUpPageState extends State<SignUpPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _idController,
+                      onChanged: (value) {
+                        isIdDup = 1;
+                        print(isIdDup);
+                      },
                       decoration: const InputDecoration(
                         labelText: '아이디',
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '아이디를 입력하세요';
-                        }
-                        if (value.length < 5) {
-                          return '아이디는 5자리 이상이어야 합니다';
-                        }
+                          if (value == null || value.isEmpty) {
+                            return '아이디를 입력하세요';
+                          }
+                          if (value.length < 5) {
+                            return '아이디는 5자리 이상이어야 합니다';
+                          }
+                          if (isIdDup !=0){
+                            return '중복 확인을 해주세요';
+                          }
                         return null;
                       },
                     ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
+                      isIdDup = await _handler.idCustomer(_idController.text);
+                      print(isIdDup);
                       // 아이디 중복 확인 로직을 추가할 수 있습니다.
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('아이디 중복 확인 기능 추가 예정')),
+                        isIdDup != 0
+                        ? const SnackBar(content: Text('아이디가 중복입니다'), backgroundColor: Colors.red,)
+                        : const SnackBar(content: Text('사용가능한 아이디입니다.'), backgroundColor: Colors.blue,)
+                        ,
                       );
                     },
                     child: const Text('중복 확인'),
@@ -229,10 +246,19 @@ class _SignUpPageState extends State<SignUpPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() == true) {
+                    Customer customer = Customer(
+                      id: _idController.text.trim(), 
+                      password: _passwordController.text.trim(), 
+                      name: _nameController.text.trim(), 
+                      phone: _phoneController.text.trim(), 
+                      email: _emailController.text.trim(), 
+                      rnumber: _ssnController.text.trim()
+                    );
                     // 모든 필드가 유효할 때의 처리
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('회원가입이 완료되었습니다!')),
                     );
+                    _handler.insertCustomer(customer);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const SignInPage()), // SignInPage로 이동
