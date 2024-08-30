@@ -248,16 +248,23 @@ class DatabaseHandler {
     return queryResult.map((e) => Shoes.fromMap(e)).toList();
   }
 
-  Future<double?> getShoePrice(int shoesSeq) async {
-    final db = await initializeDB();
+  Future<double?> getShoePrice(int shoeSeq) async {
+    final Database db = await initializeDB();
     final List<Map<String, dynamic>> result = await db.query(
       'shoes',
+      columns: ['price'],
       where: 'seq = ?',
-      whereArgs: [shoesSeq],
+      whereArgs: [shoeSeq],
     );
+
     if (result.isNotEmpty) {
-      return result.first['price'] as double?;
+      final price = result.first['price'];
+      // 가격과 타입을 로그로 출력
+      // print('Price for shoeSeq $shoeSeq: $price (type: ${price.runtimeType})');
+      // price가 int면 double로 변환하고, double이면 그대로 반환
+      return price is int ? price.toDouble() : price as double?;
     }
+
     return null;
   }
 
