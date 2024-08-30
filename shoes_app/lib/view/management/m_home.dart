@@ -1,3 +1,5 @@
+// m_home.dart
+
 import 'package:flutter/material.dart';
 import 'package:shoes_app/view/management/m_branch.dart';
 import 'package:shoes_app/view/management/m_customer.dart';
@@ -14,11 +16,11 @@ class MHome extends StatefulWidget {
 class _MHomeState extends State<MHome> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    MBranch(),
-    MDate(),
-    MCustomer(),
-    MProduct()
+  static final List<Widget> _widgetOptions = <Widget>[
+    MBranch(),   // MBranch는 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    MDate(),     // MDate도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    MCustomer(), // MCustomer도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    MProduct()   // MProduct도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
   ];
 
   void _onItemTapped(int index) {
@@ -51,9 +53,9 @@ class _MHomeState extends State<MHome> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,  // 선택된 항목의 색상
-        unselectedItemColor: Colors.grey,  // 선택되지 않은 항목의 색상
-        backgroundColor: Colors.white,  // 네비게이션 바의 배경색
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );

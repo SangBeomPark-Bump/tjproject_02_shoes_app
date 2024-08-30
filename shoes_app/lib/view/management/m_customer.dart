@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
-import 'package:shoes_app/vm/database_handler.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:shoes_app/model/order.dart';
+import 'package:shoes_app/vm/database_handler_management.dart';
 
 class MCustomer extends StatefulWidget {
   const MCustomer({super.key});
@@ -11,22 +10,43 @@ class MCustomer extends StatefulWidget {
 }
 
 class _MCustomerState extends State<MCustomer> {
-  late TooltipBehavior tooltipBehavior; 
-  late List<String> item; // dropdownbutton 리스트
-  late String dropdownValue;  // dropdownbutton 선택
   late DatabaseHandler handler;
-
-  
+  List<Order> orders = []; // 초기화
+  List<Order> filteredOrders = []; // 초기화
+  TextEditingController searchController = TextEditingController();
+  String selectedFilter = '고객 ID'; // 기본 검색 필터 설정
 
   @override
   void initState() {
     super.initState();
-    tooltipBehavior = TooltipBehavior();
-    item = ["구매내역","총매출"]; 
-    dropdownValue = "구매내역"; //dropdownbutton 선택 초기값
     handler = DatabaseHandler();
+    _loadOrders();
   }
 
+  Future<void> _loadOrders() async {
+    orders = await handler.queryOrder();
+    filteredOrders = orders;
+    setState(() {});
+  }
+
+  void _filterOrders(String query) {
+    setState(() {
+      filteredOrders = orders.where((order) {
+        switch (selectedFilter) {
+          case '고객 ID':
+            return order.customer_id.contains(query);
+          case '제품명':
+            return true; // 제품명 검색은 아래에서 처리
+          case '결제 날짜':
+            return order.paymenttime.toString().contains(query);
+          case '지점명':
+            return true; // 지점명 검색은 아래에서 처리
+          default:
+            return false;
+        }
+      }).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,69 +54,145 @@ class _MCustomerState extends State<MCustomer> {
       appBar: AppBar(
         title: const Text("고객관리"),
       ),
-      body: Center(
-        child: Column(
-          children: [
-                DropdownButton<String>( //지점 선택 드랍다운
-                dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                  value: dropdownValue, // 선택한 이름
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: item.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: DropdownButton<String>(
+                        value: selectedFilter,
+                        items: <String>['고객 ID', '제품명', '결제 날짜', '지점명'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedFilter = value!;
+                            searchController.clear(); // 필터 변경 시 검색어 초기화
+                            _filterOrders(''); // 초기화된 검색어로 다시 필터링
+                          });
+                        },
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                      dropdownValue = value!;
-                      setState(() {
-                      });
-                  },
-                ),
-                FutureBuilder(
-                  future: handler.queryOrder(),
-                  builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(), //데이터 불러오기 전
-                );
-              } else if (snapshot.hasError) { //error check
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
-              } else if (snapshot.hasData && snapshot.data != null) { //데이터 있을때 
-                return SizedBox(
-                  height: 500,
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: Row(
-                          children: [
-                            Text(snapshot.data![index].customer_id), //고객 이름
-                            Text("성별"),  //성별 rnumber로 계산
-                            Text("나이계산"), //나이 rnumber로 계산
-                            Text(snapshot.data![index].shoes_seq.toString()), //신발 코드로 제품명 찾기
-                            Text(snapshot.data![index].paymenttime.toString()),
-                            Text(snapshot.data![index].branch_branchcode.toString()) //지점코드로 지점명 찾기
-                          ]
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 5,
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          labelText: '검색',
+                          hintText: '$selectedFilter 검색',
+                          prefixIcon: const Icon(Icons.search),
+                          border: const OutlineInputBorder(),
                         ),
+                        onChanged: _filterOrders,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (filteredOrders.isEmpty)
+                const Center(
+                  child: Text('검색된 데이터가 없습니다.'),
+                )
+              else
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('고객 ID')),
+                      DataColumn(label: Text('성별')),
+                      DataColumn(label: Text('나이')),
+                      DataColumn(label: Text('제품명')),
+                      DataColumn(label: Text('결제 시간')),
+                      DataColumn(label: Text('지점명')),
+                      DataColumn(label: Text('총매출')),
+                    ],
+                    rows: filteredOrders.map((order) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(order.customer_id)), // 고객 ID
+                          DataCell(Text(_calculateGender(order.customer_id))), // 성별 계산
+                          DataCell(Text(_calculateAge(order.customer_id))), // 나이 계산
+                          DataCell(FutureBuilder<String?>(
+                            future: handler.getShoeName(order.shoes_seq), // 신발 이름 가져오기
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return const Text('Unknown Product');
+                              } else {
+                                return Text(snapshot.data ?? 'Unknown Product');
+                              }
+                            },
+                          )),
+                          DataCell(Text(order.paymenttime.toString())), // 결제 시간
+                          DataCell(FutureBuilder<String?>(
+                            future: handler.getBranchName(order.branch_branchcode), // 지점명 가져오기
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return const Text('Unknown Branch');
+                              } else {
+                                return Text(snapshot.data ?? 'Unknown Branch');
+                              }
+                            },
+                          )),
+                          DataCell(FutureBuilder<double?>(
+                            future: _calculateTotalSales(order), // 총매출 계산
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return const Text('0.0');
+                              } else {
+                                return Text(snapshot.data?.toStringAsFixed(2) ?? '0.00');
+                              }
+                            },
+                          )),
+                        ],
                       );
-                    },
+                    }).toList(),
                   ),
-                );
-              } else {
-                return const Center(
-                  child: Text('비어있음'), //고객 정보 없을 때
-                );
-              }
-                  },
-                  )
-          ],
+                ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  // 총매출 계산 함수 (주문 항목 별로 가격을 곱하여 합산)
+  Future<double> _calculateTotalSales(Order order) async {
+    final double? price = await handler.getShoePrice(order.shoes_seq);
+    return (price ?? 0.0) * order.quantity;
+  }
+
+  // 성별 계산 함수 (예제)
+  String _calculateGender(String customerId) {
+    try {
+      return customerId.endsWith('1') || customerId.endsWith('3') ? '남성' : '여성';
+    } catch (e) {
+      return '알 수 없음';
+    }
+  }
+
+  // 나이 계산 함수 (예제)
+  String _calculateAge(String customerId) {
+    try {
+      String birthYear = '19' + customerId.substring(0, 2);
+      int age = DateTime.now().year - int.parse(birthYear);
+      return age.toString();
+    } catch (e) {
+      return '알 수 없음';
+    }
   }
 }
