@@ -1,6 +1,11 @@
+import 'dart:ffi';
+import 'dart:math';
 class Order{
+  
+  
   //Properties
-  String seq;
+  Random random = Random();
+  String? seq;
   int branch_branchcode;
   String customer_id;
   int shoes_seq;
@@ -11,7 +16,6 @@ class Order{
   DateTime? pickuptime;
 
   Order({
-    required this.seq,
     required this.branch_branchcode,
     required this.customer_id,
     required this.shoes_seq,
@@ -21,6 +25,16 @@ class Order{
     this.canceltime,
     this.pickuptime,
   });
+  
+  seqMaker(){
+    String seqYear = paymenttime.year.toRadixString(16).padLeft(3, '0');
+    String seqDayMonth = (paymenttime.month+paymenttime.day * 932).toRadixString(16).padLeft(4, '0');
+    String seqHourMinute = (paymenttime.hour+paymenttime.minute * 289).toRadixString(16).padLeft(4, '0');
+    String seqSec = (paymenttime.second * 37).toRadixString(16).padLeft(3, '0');
+    String seqMili = (paymenttime.millisecond * 65).toRadixString(16).padLeft(4, '0');
+    String seqMicro = (paymenttime.microsecond * 63).toRadixString(16).padLeft(4, '0');
+    seq = seqYear + seqDayMonth + seqHourMinute + customer_id[0]+ customer_id[1]; seqSec + seqMili + seqMicro + order_seq.toString();
+  }
 
   Order.fromMap(Map<String, dynamic> res)
   : seq = res['seq'],

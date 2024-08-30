@@ -1,54 +1,150 @@
-import 'package:flutter/material.dart';
-import 'package:shoes_app/view/sign/sign_in.dart';
 
-class CartPage extends StatelessWidget {
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
+class CartPage extends StatefulWidget {
   const CartPage({super.key});
+
+  @override
+  State<CartPage> createState() => _CartState();
+}
+
+class _CartState extends State<CartPage> {
+  late List<String> item; //지점 dropdownbutton 리스트 
+  late String dropdownValue; // dropdownbutton 선택
+  final box = GetStorage(); // get Stroage
+  late List<int> wishSeq; //제품번호 리스트 ??
+  late List<String> wishShoesname; // 장바구니 신발 이름 
+  late List<int> wishPrice; // 장바구니 신발 가격
+  late List<Uint8List> wishImage; //장바구니 신발 이미지
+  late List<int> wishSize; //장바구니 신발 사이즈
+  late List<String> wishBrand; // 장바구니 신발 브랜드
+
+  @override
+  void initState() {
+    super.initState();
+    item = ["강남점", "신도림점", "노원점"];
+    dropdownValue = "강남점";
+
+    // GetStorage에서 장바구니 데이터 읽어오기
+    wishSeq = box.read<List<int>>('wishSeq') ?? [];
+    wishShoesname = box.read<List<String>>('wishShoesname') ?? [];
+    wishPrice = box.read<List<int>>('wishPrice') ?? [];
+    wishImage = box.read<List<Uint8List>>('wishImage') ?? [];
+    wishSize = box.read<List<int>>('wishSize') ?? [];
+    wishBrand = box.read<List<String>>('wishBrand') ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('장바구니'),
-        leading: IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () {
-            _showLogoutConfirmationDialog(context);
-          },
-        ),
       ),
-      body: const Center(
-        child: Text('장바구니가 비어있어용'),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(right: 50),
+                  child: Text('수령장소', style: TextStyle()),
+                ),
+                DropdownButton<String>( //지점 드랍다운 버튼
+                  dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+                  value: dropdownValue,
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  items: item.map((String item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownValue = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          Expanded( //장바구니 목록 
+            child: ListView.builder(
+              itemCount: wishSeq.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: Row(
+                    children: [
+                      Image.memory(wishImage[index], width: 70),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(wishShoesname[index]),
+                            Text("Size: ${wishSize[index]}"),
+                            Text("${wishPrice[index]}₩")
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 30),
+                child: 
+                ElevatedButton( //구매 버튼
+                  onPressed: () {
+                    purchaseDialog(); //구매 확인 다이얼로그
+                  },
+                  child: const Text("구매"),
+                ),
+              ),
+              ElevatedButton( //취소 버튼
+                onPressed: () {
+                  // 취소 버튼 기능 미정
+                },
+                child: const Text('취소'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  void _showLogoutConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('로그아웃'),
-          content: const Text('로그아웃하시겠습니까?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('아니오'),
-              onPressed: () {
-                Navigator.of(context).pop(); // 대화 상자 닫기
-              },
-            ),
-            TextButton(
-              child: const Text('예'),
-              onPressed: () {
-                Navigator.of(context).pop(); // 대화 상자 닫기
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignInPage()), // SignInPage로 이동
-                );
-              },
-            ),
-          ],
-        );
-      },
+  purchaseDialog() {
+    Get.defaultDialog(
+      title: "구매 하시겠습니까?",
+      middleText: "수령장소 : $dropdownValue",
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      barrierDismissible: false,
+      actions: [
+        TextButton(
+          onPressed: () {
+            // 구매 처리 로직
+            Get.back(); // 다이얼로그 닫기
+          },
+          child: const Text('예'),
+        ),
+        TextButton(
+          onPressed: () {
+            Get.back(); // 다이얼로그 닫기
+          },
+          child: const Text('아니오'),
+        ),
+      ],
     );
   }
 }

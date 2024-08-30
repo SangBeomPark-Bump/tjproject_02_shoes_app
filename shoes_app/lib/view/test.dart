@@ -77,44 +77,7 @@ class _TestState extends State<Test> {
       await loadAssetAsBinary('images/prosp_black.png'),
       await loadAssetAsBinary('images/prosp_red.png'),
     ];
-    List<Shoes> shoes = [
-      Shoes(
-          shoesname: 'Newb Red',
-          price: 100000,
-          image: imageList[0],
-          size: 265,
-          brand: 'newBalance'),
-      Shoes(
-          shoesname: 'Newb White',
-          price: 100000,
-          image: imageList[1],
-          size: 255,
-          brand: 'newBalance'),
-      Shoes(
-          shoesname: 'NIKE Black',
-          price: 120000,
-          image: imageList[2],
-          size: 265,
-          brand: 'NIKE'),
-      Shoes(
-          shoesname: 'NIKE Red',
-          price: 120000,
-          image: imageList[3],
-          size: 255,
-          brand: 'NIKE'),
-      Shoes(
-          shoesname: 'Prosp Black',
-          price: 130000,
-          image: imageList[4],
-          size: 265,
-          brand: 'prosPecs'),
-      Shoes(
-          shoesname: 'Prosp Red',
-          price: 130000,
-          image: imageList[5],
-          size: 255,
-          brand: 'prosPecs'),
-    ];
+    List<Shoes> shoes = await MadeOrderPsb().shoes();
     for (Shoes shoe in shoes) {
       handler.insertShoe(shoe);
     }
@@ -123,7 +86,7 @@ class _TestState extends State<Test> {
     print(result);
   }
 
-//FUnctions
+//Functions
   Future<Uint8List> loadAssetAsBinary(String assetPath) async {
     // assetPath는 Asset 이미지의 경로 예: 'assets/images/sample.png'
     ByteData byteData = await rootBundle.load(assetPath); // 이미지 로드
@@ -133,50 +96,7 @@ class _TestState extends State<Test> {
   }
 
   pressed2() async {
-    List<Customer> customers = [
-      Customer(
-          id: 'yubee',
-          password: '123',
-          name: '유비',
-          phone: '010-1234-5678',
-          email: 'yubee@naver.com',
-          rnumber: '621004-1'),
-      Customer(
-          id: 'gwanwoo',
-          password: '123',
-          name: '관우',
-          phone: '010-1234-5678',
-          email: 'gwanwoo@naver.com',
-          rnumber: '151104-1'),
-      Customer(
-          id: 'jangbee',
-          password: '123',
-          name: '장비',
-          phone: '010-1234-5678',
-          email: 'jannbee@naver.com',
-          rnumber: '830806-1'),
-      Customer(
-          id: 'yeopho',
-          password: '123',
-          name: '여포',
-          phone: '010-1234-5678',
-          email: 'yeopho@naver.com',
-          rnumber: '951114-1'),
-      Customer(
-          id: 'choseon',
-          password: '123',
-          name: '초선',
-          phone: '010-1234-5678',
-          email: 'choseon@naver.com',
-          rnumber: '890715-2'),
-      Customer(
-          id: 'heonje',
-          password: '123',
-          name: '헌제',
-          phone: '010-1234-5678',
-          email: 'heonje@naver.com',
-          rnumber: '000121-1'),
-    ];
+    List<Customer> customers = MadeOrderPsb().customer();
 
     for (Customer customer in customers) {
       handler.insertCustomer(customer);
@@ -186,11 +106,7 @@ class _TestState extends State<Test> {
   }
 
   pressed3() async {
-    List<Branch> branches = [
-      Branch(branchname: '강남점'),
-      Branch(branchname: '신도림점'),
-      Branch(branchname: '노원점'),
-    ];
+    List<Branch> branches = MadeOrderPsb().branch();
 
     for (Branch branches in branches) {
       handler.insertBranch(branches);
@@ -200,25 +116,20 @@ class _TestState extends State<Test> {
   }
 
   pressed4() async {
-    List<Order> orders = MadeOrderPsb().function();
+    List<Order> orders = MadeOrderPsb().order();
 
     for (Order order in orders) {
       handler.insertOrder(order);
+      order.seqMaker();
     }
     List<Order> result = await (handler.queryOrder());
     print(result.length);
   }
 
-  seqMaker() {
-    // DateTime now = DateTime.now();
-    // String nYour = now.year.toString();
-    // String nMonth = now.month.toString();
-    // String nDay= now.day.toString();
-    // String nHour = now.hour.toString();
-    // String nMinute = now.minute.toString();
-    // String nSec = now.second.toString();
-    // String nMiliSec = now.millisecond.toString();
-    // String nMicroSec = now.microsecond.toString();
-    // print(DateTime(2024, 8, 1, 14 , 30, 29).toString());
+  seqMaker(){
+    Order order = Order(branch_branchcode: 2, customer_id: 'ff', shoes_seq: 3, order_seq: 1, quantity: 60, paymenttime: DateTime.now());
+    order.seqMaker();
+    print(order.seq);
   }
+
 }//End
