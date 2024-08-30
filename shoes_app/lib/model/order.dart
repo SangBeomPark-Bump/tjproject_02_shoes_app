@@ -44,6 +44,6 @@ class Order{
   order_seq = res['order_seq'],
   quantity = res['quantity'],
   paymenttime = DateTime.parse(res['paymenttime']),
-  canceltime = res['canceltime'] == null ? DateTime.parse(res['canceltime']) : null ,
-  pickuptime = res['pickuptime'] == null ? DateTime.parse(res['pickuptime']) : null ;  
+  canceltime = res['canceltime'] != 'null' ? DateTime.parse(res['canceltime']) : null ,
+  pickuptime = res['pickuptime'] != 'null' ? DateTime.parse(res['pickuptime']) : null ;  
 }

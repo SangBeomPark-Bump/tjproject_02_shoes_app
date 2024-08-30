@@ -16,13 +16,12 @@ class _MBranchState extends State<MBranch> {
   late Database _database;
   String selectedMonth = DateFormat('yyyy-MM').format(DateTime.now());
   bool isDatabaseInitialized = false;
-  late List<String> availableMonths ;
 
   @override
   void initState() {
     super.initState();
     _initializeDatabase();
-    availableMonths = ['06','07', '08'];
+    print(selectedMonth);
     // if (!availableMonths.contains(selectedMonth)) {
     //   selectedMonth = '08'; // 기본적으로 5월로 설정
     // }
@@ -40,12 +39,14 @@ class _MBranchState extends State<MBranch> {
 
   Future<List<String>> _loadAvailableMonth()async{
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
-        SELECT substr(o.paymenttime, 0, 7) as ym
+        SELECT substr(o.pickuptime, 0, 8) as ym
         FROM ordered o
+        where ym != 'null'
         GROUP BY ym
       ''', );
       List<String> availableMonths = [];
       for (Map i in rawData){
+        print(i);
         availableMonths.add(i['ym']);
       }
       return availableMonths;
@@ -55,7 +56,9 @@ class _MBranchState extends State<MBranch> {
 
 
 
-  Future<Map<String, double>> _loadBranchSalesData() async {
+  Future<Map<String, double>> _loadBranchSalesData(selectedMonth) async {
+          print(selectedMonth);
+
     if (!isDatabaseInitialized) {
       return {};
     }
@@ -90,12 +93,13 @@ class _MBranchState extends State<MBranch> {
   }
 
   void _onPreviousMonth(availableMonths) {
-    // print(selectedMonth);
     int currentMonthIndex = availableMonths.indexOf(selectedMonth);
     if (currentMonthIndex > 0) {
       // print(availableMonths);
       _onMonthChanged(availableMonths[currentMonthIndex - 1]);
     }
+    print(selectedMonth);
+
   }
 
   void _onNextMonth(availableMonths) {
@@ -149,6 +153,7 @@ class _MBranchState extends State<MBranch> {
                                 value: selectedMonth,
                                 items:availableMonths.data!
                                 .map((month) {
+                                  print(availableMonths.data);
                                   return DropdownMenuItem(
                                     value: month,
                                     child: Text('$month 월'),
@@ -170,7 +175,7 @@ class _MBranchState extends State<MBranch> {
                             ],
                           ),
                       FutureBuilder<Map<String, double>>(
-                          future: _loadBranchSalesData(),
+                          future: _loadBranchSalesData(selectedMonth),
                           builder: (context, snapshot) {
                             // print(snapshot.data);
                             if (snapshot.connectionState == ConnectionState.waiting) {

@@ -159,7 +159,10 @@ Future<List<Order>> queryOrder() async {
   final List<Map<String, Object?>> queryResult = await db.rawQuery(
     'SELECT * FROM ordered',
   );
-  return queryResult.map((e) => Order.fromMap(e)).toList();
+  print(queryResult[21]['pickuptime']);
+  List<Order> resultorder = queryResult.map((e) => Order.fromMap(e)).toList();
+  print(resultorder[21].pickuptime);
+  return resultorder;
 }
 
 Future<List<Branch>> queryBranch() async {

@@ -121,15 +121,17 @@ class _TestState extends State<Test> {
     for (Order order in orders) {
       handler.insertOrder(order);
       order.seqMaker();
+      print(order.pickuptime);
     }
     List<Order> result = await (handler.queryOrder());
     print(result.length);
   }
 
-  seqMaker(){
-    Order order = Order(branch_branchcode: 2, customer_id: 'ff', shoes_seq: 3, order_seq: 1, quantity: 60, paymenttime: DateTime.now());
-    order.seqMaker();
-    print(order.seq);
+  seqMaker()async{
+    List<Order> aaa = await handler.queryOrder();
+    for ( Order i in aaa){
+      print(i.pickuptime);
+    }
   }
 
 }//End
