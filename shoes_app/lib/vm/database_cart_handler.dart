@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseCarthandler{
     
-
+    //db생성 
     Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
     return openDatabase(
@@ -61,7 +61,12 @@ class DatabaseCarthandler{
   }
 
 
-
+//<<<<장바구니에서 DB ORDER Table 입력>>>
+/*
+  seq : Order seqmaker
+  branchcode, customerid,shoesseq,quantity
+  paymenttime : datetime
+*/
 Future<int> insertOrder(Order order) async {
   int result = 0;
   final Database db = await initializeDB();
@@ -85,10 +90,34 @@ Future<int> insertOrder(Order order) async {
   return result;
 }
 
+Future<int> insertId(Order order) async {
+  int result = 0;
+  final Database db = await initializeDB();
+  result = await db.rawInsert(
+    """
+      INSERT INTO ordered(seq, branch_branchcode, customer_id, shoes_seq, order_seq, quantity, paymenttime, canceltime, pickuptime)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """,
+    [
+      order.seq,
+      order.branch_branchcode,
+      order.customer_id,
+      order.shoes_seq,
+      order.order_seq,
+      order.quantity,
+      order.paymenttime.toString(),
+      order.canceltime.toString(),
+      order.pickuptime.toString()
+    ],
+  );
+  return result;
+}
+
+//<<<<<<<<<<<branch검색>>>>>>>>>>
 Future<List<Branch>> queryBranch() async {
   final Database db = await initializeDB();
   final List<Map<String, Object?>> queryResult = await db.rawQuery(
-    'SELECT  FROM branch',
+    'SELECT branchcode FROM branch',
   );
   return queryResult.map((e) => Branch.fromMap(e)).toList();
 }

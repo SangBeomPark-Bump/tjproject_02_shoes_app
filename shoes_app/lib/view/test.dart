@@ -2,11 +2,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:shoes_app/model/branch.dart';
 import 'package:shoes_app/model/customer.dart';
 import 'package:shoes_app/model/made_order_psb.dart';
 import 'package:shoes_app/model/order.dart';
 import 'package:shoes_app/model/shoes.dart';
+import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 
 class Test extends StatefulWidget {
@@ -31,6 +33,9 @@ class _TestState extends State<Test> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('테스트 입니다!'),
+        actions: [
+          ElevatedButton(onPressed: () => Get.to(HomePage()), child: Icon(Icons.home_outlined))
+        ],
       ),
       body: Center(
         child: Column(
