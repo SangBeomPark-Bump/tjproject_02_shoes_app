@@ -63,24 +63,62 @@ class DatabaseHandler_Product{
     );
   }
 
+    Future<List<List<dynamic>>> queryTotalPriceByMonth(String brand) async {
+    final Database db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.rawQuery(
+      """
+          SELECT 
+              s.brand,
+              strftime('%Y-%m', o.paymenttime) AS orderMonth,
+              SUM(s.price * o.quantity) AS totalPriceQuantity
+          FROM 
+              'ordered' o
+          JOIN 
+              shoes s ON o.shoes_seq = s.seq
+          WHERE 
+              o.pickuptime IS NOT NULL
+              AND s.brand = ?
+          GROUP BY 
+              orderMonth
+          ORDER BY 
+              orderMonth
+      """
+    ,[brand]
+    );
+    
+
+    // 결과를 List<List<dynamic>> 형식으로 변환
+    List<List<dynamic>> result = queryResult.map((row) {
+      // orderMonth를 DateTime으로 변환
+      String orderMonth = row['orderMonth'] as String;
+      DateTime dateTime = DateTime.parse(orderMonth + "-01"); // 월을 1일로 설정
+
+      // totalPriceQuantity를 int로 변환
+      int totalPriceQuantity = row['totalPriceQuantity'] as int;
+
+      return [dateTime, totalPriceQuantity];
+    }).toList();
+
+    return result;
+  }
+
 
 //query
-Future<List?> queryProductChart() async {
+Future<List<String>> queryProductkeys() async {
   final Database db = await initializeDB();
   final List<Map<String, Object?>> queryResult = await db.rawQuery(
     """
-        SELECT count(o.seq) strftime(%Y-%m, paymentdate) as orderMonth ,
-        FROM 
-            'order' o
-        JOIN 
-            shoes s ON o.shoes_seq = s.seq
-        group by orderMonth
-        order by orderMonth
+        SELECT DISTINCT(brand) as brands
+        FROM shoes
+        group by brands
     """,
   );
   print(queryResult);
+  return queryResult.map((brand) => brand['brands'] as String ).toList();
   //return queryResult.map((Dae) => Customer.fromMap(e)).toList();
 }
 
 
 }
+
+

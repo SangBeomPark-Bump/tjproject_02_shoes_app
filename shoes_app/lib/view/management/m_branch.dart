@@ -153,7 +153,6 @@ class _MBranchState extends State<MBranch> {
                                 value: selectedMonth,
                                 items:availableMonths.data!
                                 .map((month) {
-                                  print(availableMonths.data);
                                   return DropdownMenuItem(
                                     value: month,
                                     child: Text('$month 월'),
