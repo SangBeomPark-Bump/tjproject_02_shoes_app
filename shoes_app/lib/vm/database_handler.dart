@@ -267,28 +267,10 @@ Future<int> updateShoe(Shoes shoe) async {
 
 removeAll()async{
   final Database db = await initializeDB();
-    final int shoe_queryResult = await db.rawDelete(
-    """
-        DELETE 
-        FROM shoes
-    """
-  );
     final int order_queryResult = await db.rawDelete(
     """
         DELETE 
         FROM ordered
-    """
-  );
-    final int branch_queryResult = await db.rawDelete(
-    """
-        DELETE 
-        FROM branch
-    """
-  );
-    final int customer_queryResult = await db.rawDelete(
-    """
-        DELETE 
-        FROM customer
     """
   );
 }

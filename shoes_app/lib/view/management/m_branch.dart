@@ -16,12 +16,13 @@ class _MBranchState extends State<MBranch> {
   late Database _database;
   String selectedMonth = DateFormat('yyyy-MM').format(DateTime.now());
   bool isDatabaseInitialized = false;
+  late bool monthInitial; 
 
   @override
   void initState() {
     super.initState();
+    monthInitial = true;
     _initializeDatabase();
-    print(selectedMonth);
     // if (!availableMonths.contains(selectedMonth)) {
     //   selectedMonth = '08'; // 기본적으로 5월로 설정
     // }
@@ -39,16 +40,19 @@ class _MBranchState extends State<MBranch> {
 
   Future<List<String>> _loadAvailableMonth()async{
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
-        SELECT substr(o.pickuptime, 0, 8) as ym
+        SELECT substr(o.pickuptime, 0, 7) as ym
         FROM ordered o
         where ym != 'null'
         GROUP BY ym
       ''', );
       List<String> availableMonths = [];
       for (Map i in rawData){
-        print(i);
+        // print(i);
         availableMonths.add(i['ym']);
       }
+      if(monthInitial){
+        monthInitial = false;
+        selectedMonth = availableMonths[availableMonths.length-1];}
       return availableMonths;
 
 
@@ -57,13 +61,14 @@ class _MBranchState extends State<MBranch> {
 
 
   Future<Map<String, double>> _loadBranchSalesData(selectedMonth) async {
-          print(selectedMonth);
+      // print(selectedMonth);
 
     if (!isDatabaseInitialized) {
       return {};
     }
 
     try {
+      (selectedMonth);
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
         SELECT b.branchname, SUM(o.quantity) as total_sales
         FROM ordered o
@@ -71,6 +76,15 @@ class _MBranchState extends State<MBranch> {
         WHERE strftime('%Y-%m', o.pickuptime) = ?
         GROUP BY b.branchname
       ''', [selectedMonth]);
+      
+      // List<Map<String, dynamic>> rawData = await _database.rawQuery('''
+      //   SELECT b.branchname, SUM(o.quantity) as total_sales
+      //   FROM ordered o
+      //   JOIN branch b ON o.branch_branchcode = b.branchcode
+      //   WHERE strftime('%Y-%m', o.pickuptime) = ?
+      //   GROUP BY b.branchname
+      // ''', [selectedMonth]);
+      print(rawData);
       if (rawData.isNotEmpty){
         return {
           for (var data in rawData)
@@ -95,10 +109,9 @@ class _MBranchState extends State<MBranch> {
   void _onPreviousMonth(availableMonths) {
     int currentMonthIndex = availableMonths.indexOf(selectedMonth);
     if (currentMonthIndex > 0) {
-      // print(availableMonths);
+    // print(availableMonths);
       _onMonthChanged(availableMonths[currentMonthIndex - 1]);
     }
-    print(selectedMonth);
 
   }
 
@@ -111,7 +124,7 @@ class _MBranchState extends State<MBranch> {
 
   @override
   Widget build(BuildContext context) {
-    String currentMonthName = DateFormat('yyyy-MMMM').format(DateFormat('yyyy-MM').parse(selectedMonth));
+    String? currentMonthName;
 
     return Scaffold(
       appBar: AppBar(
@@ -160,7 +173,6 @@ class _MBranchState extends State<MBranch> {
                                 }
                                 ).toList(),
                                 onChanged: (newMonth) {
-                                  print(availableMonths);
                                   _onMonthChanged(newMonth!);
                                 },
                               ),
@@ -191,7 +203,7 @@ class _MBranchState extends State<MBranch> {
                       
                                     const SizedBox(height: 20),
                                     Text(
-                                      '$currentMonthName 매출 데이터',
+                                      '${DateFormat('yyyy-MMMM').format(DateFormat('yyyy-MM').parse(selectedMonth))} 매출데이터',
                                       style: const TextStyle(
                                           fontSize: 20, fontWeight: FontWeight.bold),
                                     ),
