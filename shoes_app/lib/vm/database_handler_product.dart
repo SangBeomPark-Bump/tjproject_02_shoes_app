@@ -69,14 +69,15 @@ class DatabaseHandler_Product{
       """
           SELECT 
               s.brand,
-              strftime('%Y-%m', o.paymenttime) AS orderMonth,
+              strftime('%Y-%m', o.pickuptime) AS orderMonth,
               SUM(s.price * o.quantity) AS totalPriceQuantity
           FROM 
               'ordered' o
           JOIN 
               shoes s ON o.shoes_seq = s.seq
           WHERE 
-              o.pickuptime IS NOT NULL
+              orderMonth IS NOT NULL
+              AND o.pickuptime IS NOT NULL
               AND s.brand = ?
           GROUP BY 
               orderMonth
