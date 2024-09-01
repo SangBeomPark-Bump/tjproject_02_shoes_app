@@ -61,6 +61,11 @@ class _TestState extends State<Test> {
                   seqMaker();
                 },
                 child: const Text('프린트')),
+            ElevatedButton(
+                onPressed: () {
+                  initButton();
+                },
+                child: const Text('초기화')),
           ],
         ),
       ),
@@ -83,7 +88,7 @@ class _TestState extends State<Test> {
     }
 
     List<Shoes> result = await (handler.queryShoes());
-    print(result);
+    print(result.length);
   }
 
 //Functions
@@ -132,6 +137,10 @@ class _TestState extends State<Test> {
     for ( Order i in aaa){
       print(i.pickuptime);
     }
+  }
+
+  initButton(){
+    handler.removeAll();
   }
 
 }//End
