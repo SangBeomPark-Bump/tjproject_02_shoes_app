@@ -1,8 +1,4 @@
 import 'package:path/path.dart';
-import 'package:shoes_app/model/branch.dart';
-import 'package:shoes_app/model/customer.dart';
-import 'package:shoes_app/model/order.dart';
-import 'package:shoes_app/model/shoes.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHandler_Product{
@@ -77,7 +73,8 @@ class DatabaseHandler_Product{
               shoes s ON o.shoes_seq = s.seq
           WHERE 
               orderMonth IS NOT NULL
-              AND o.pickuptime IS NOT NULL
+              AND o.pickuptime IS NOT 'null'
+              AND o.canceltime IS 'null'
               AND s.brand = ?
           GROUP BY 
               orderMonth

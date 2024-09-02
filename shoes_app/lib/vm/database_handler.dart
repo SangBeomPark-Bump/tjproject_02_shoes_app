@@ -272,7 +272,9 @@ removeOrdered()async{
         DELETE 
         FROM ordered
     """
+
   );
+  print(order_queryResult);
 }
 
 

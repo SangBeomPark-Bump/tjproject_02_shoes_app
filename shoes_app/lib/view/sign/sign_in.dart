@@ -55,7 +55,7 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                   TextFormField(
                     controller: _idController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Id',
                       border: OutlineInputBorder(),
                     ),
@@ -72,7 +72,8 @@ class _SignInPageState extends State<SignInPage> {
                   SizedBox(height: 16.0),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: InputDecoration(
+                    obscureText: true,
+                    decoration: const InputDecoration(
                       labelText: 'PassWord',
                       border: OutlineInputBorder(),
                     ),
@@ -133,9 +134,35 @@ class _SignInPageState extends State<SignInPage> {
 
 
     void _submitForm(context)async {
-    if (_idController.text.trim() == 'admin' && _passwordController.text.trim() == '123'){
-      Get.back();
-      Get.to(() => const MHome());
+    if (_idController.text.trim() == _adminid && _passwordController.text.trim() == _adminpassword ){
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('관리자 로그인'),
+          content: const Text('환영합니다! 관리자님!' ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                Get.back();
+                Get.back();
+                Get.to(() => const MHome());
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+
+
+
+
+
+
+
     }else{
         isExist = await DatabaseSignUpHandler().idPasswordCustomer(_idController.text.trim(), _passwordController.text.trim());  
         setState(() {});

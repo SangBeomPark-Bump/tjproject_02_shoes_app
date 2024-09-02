@@ -149,21 +149,23 @@ class MadeOrderPsb{
         }else{
           day = random.nextInt(30)+1;
         }
+
+        int pickupCancle = random.nextInt(10);
       
 
         DateTime paymenttime = DateTime(2024, j, day, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
-        orderList.add(Order(
-          branch_branchcode: random.nextInt(3)+1, 
-          customer_id: nameList[random.nextInt(7)], 
-          shoes_seq: random.nextInt(6)+1, 
-          order_seq: 1, 
-          quantity: random.nextInt(10)+1,
-          paymenttime: paymenttime,
-          pickuptime : ((j == 8 && random.nextInt(10)>7) ? paymenttime.add(const Duration(days: 1)) : null) 
-        )
+          orderList.add(Order(
+            branch_branchcode: random.nextInt(3)+1, 
+            customer_id: nameList[random.nextInt(7)], 
+            shoes_seq: random.nextInt(6)+1, 
+            order_seq: 1, 
+            quantity: random.nextInt(10)+1,
+            paymenttime: paymenttime,
+            pickuptime : (((j == 8 && pickupCancle>7) || pickupCancle>8) ? null : paymenttime.add(const Duration(days: 1))),
+            canceltime : (pickupCancle >8)? paymenttime.add(const Duration(days: 1)) : null
+          )
         );
       }
-    print(orderList);
   }
 
     return orderList;

@@ -22,11 +22,7 @@ class _MBranchState extends State<MBranch> {
   void initState() {
     super.initState();
     monthInitial = true;
-    _initializeDatabase();
-    // if (!availableMonths.contains(selectedMonth)) {
-    //   selectedMonth = '08'; // 기본적으로 5월로 설정
-    // }
-  }
+    _initializeDatabase();  }
 
   Future<void> _initializeDatabase() async {
     String path = await getDatabasesPath();
@@ -43,13 +39,15 @@ class _MBranchState extends State<MBranch> {
         SELECT substr(o.paymenttime, 0, 7) as ym
         FROM ordered o
         where ym != 'null'
+        AND o.canceltime IS 'null'
         GROUP BY ym
       ''', );
       List<String> availableMonths = [];
       for (Map i in rawData){
-        // print(i);
+
         availableMonths.add(i['ym']);
       }
+      print(availableMonths);
       if(monthInitial){
         monthInitial = false;
         selectedMonth = availableMonths[availableMonths.length-1];}
@@ -61,33 +59,24 @@ class _MBranchState extends State<MBranch> {
 
 
   Future<Map<String, double>> _loadBranchSalesData(selectedMonth) async {
-      // print(selectedMonth);
 
-    if (!isDatabaseInitialized) {
-      return {};
-    }
-
-    try {
-      (selectedMonth);
-      List<Map<String, dynamic>> rawData = await _database.rawQuery('''
-        SELECT b.branchname, SUM(o.quantity) as total_sales
-        FROM ordered o
-        JOIN branch b ON o.branch_branchcode = b.branchcode
-        WHERE strftime('%Y-%m', o.paymenttime) = ?
-        GROUP BY b.branchname
-      ''', [selectedMonth]);
-      if (rawData.isNotEmpty){
-        return {
-          for (var data in rawData)
-            data['branchname'].toString(): (data['total_sales'] as num).toDouble(),
-        };
-      }else{
-        return {'데이터 없음': 1.0};
-      }
-    } catch (e) {
-      print("Error loading branch sales data: $e");
+    List<Map<String, dynamic>> rawData = await _database.rawQuery('''
+      SELECT b.branchname, SUM(o.quantity) as total_sales
+      FROM ordered o
+      JOIN branch b ON o.branch_branchcode = b.branchcode
+      WHERE strftime('%Y-%m', o.paymenttime) = ?
+      AND o.canceltime IS 'null'
+      GROUP BY b.branchname
+    ''', [selectedMonth]);
+    if (rawData.isNotEmpty){
+      return {
+        for (var data in rawData)
+          data['branchname'].toString(): (data['total_sales'] as num).toDouble(),
+      };
+    }else{
       return {'데이터 없음': 1.0};
     }
+
   }
 
   void _onMonthChanged(String newMonth) {
@@ -98,6 +87,7 @@ class _MBranchState extends State<MBranch> {
   }
 
   void _onPreviousMonth(availableMonths) {
+    print(availableMonths);
     int currentMonthIndex = availableMonths.indexOf(selectedMonth);
     if (currentMonthIndex > 0) {
     // print(availableMonths);
@@ -115,8 +105,6 @@ class _MBranchState extends State<MBranch> {
 
   @override
   Widget build(BuildContext context) {
-    String? currentMonthName;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Branch Sales'),
@@ -168,7 +156,7 @@ class _MBranchState extends State<MBranch> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.arrow_forward),
+                                icon: const Icon(Icons.arrow_forward),
                                 onPressed:()=> _onNextMonth(availableMonths.data!),
                                 color: availableMonths.data!.indexOf(selectedMonth) < availableMonths.data!.length - 1
                                     ? Colors.black

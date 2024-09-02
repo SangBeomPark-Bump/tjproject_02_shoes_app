@@ -28,25 +28,19 @@ class _MCustomerState extends State<MCustomer> {
   }
 
   Future<void> _loadOrders() async {
-    try {
-      orders = await handler.queryOrder();
-      _groupOrdersByCustomerId();
-      setState(() {});
-    } catch (e) {
-      print("Error loading orders: $e");
-    }
+    orders = await handler.queryOrder();
+    _groupOrdersByCustomerId();
+    setState(() {});
   }
 
   void _groupOrdersByCustomerId() {
     groupedOrders = {};
     for (var order in orders) {
       String? customerId = order.customer_id;
-      if (customerId != null) {
-        if (groupedOrders.containsKey(customerId)) {
-          groupedOrders[customerId]!.add(order);
-        } else {
-          groupedOrders[customerId] = [order];
-        }
+      if (groupedOrders.containsKey(customerId)) {
+        groupedOrders[customerId]!.add(order);
+      } else {
+        groupedOrders[customerId] = [order];
       }
     }
   }
@@ -61,7 +55,7 @@ class _MCustomerState extends State<MCustomer> {
         bool matches = false;
         switch (selectedFilter) {
           case '고객 ID':
-            matches = order.customer_id?.contains(query) ?? false;
+            matches = order.customer_id.contains(query);
             break;
           case '제품명':
             matches = order.shoes_seq.toString().contains(query);
@@ -203,7 +197,6 @@ class _MCustomerState extends State<MCustomer> {
             builder: (context, snapshot) {
 
             return snapshot.hasData? Text(snapshot.data!) : Text('') ;
-              ;
             }
           )
         ),
@@ -257,7 +250,7 @@ class _MCustomerState extends State<MCustomer> {
             builder: (context, snapshot) {
                 if(snapshot.hasData){
                 }
-            return snapshot.hasData? Text(snapshot.data!) : Text('') ;
+            return snapshot.hasData? Text(snapshot.data!) : const Text('') ;
             }
           ) 
         ),
@@ -266,7 +259,7 @@ class _MCustomerState extends State<MCustomer> {
           future : _calculateAge(customerId),
           builder: (context,snapshot) {
 
-            return snapshot.hasData? Text(snapshot.data!) : Text('') ;
+            return snapshot.hasData? Text(snapshot.data!) : const Text('') ;
           }
         )),
         DataCell(
