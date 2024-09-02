@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shoes_app/model/order.dart';
 import 'package:shoes_app/vm/database_handler_management.dart';
@@ -195,8 +197,24 @@ class _MCustomerState extends State<MCustomer> {
     return DataRow(
       cells: [
         DataCell(Text(customerId)),
-        DataCell(Text(_calculateGender(customerId))),
-        DataCell(Text(_calculateAge(customerId))),
+        DataCell(
+          FutureBuilder(
+            future: _calculateGender(customerId),
+            builder: (context, snapshot) {
+
+            return snapshot.hasData? Text(snapshot.data!) : Text('') ;
+              ;
+            }
+          )
+        ),
+        DataCell(
+          FutureBuilder(
+            future : _calculateAge(customerId),
+            builder: (context,snapshot) {
+              return snapshot.hasData ? Text(snapshot.data!) : Text('');
+            }
+          )
+        ),
         DataCell(
           FutureBuilder<String>(
             future: _getProductNamesWithQuantities(customerOrders),
@@ -233,8 +251,24 @@ class _MCustomerState extends State<MCustomer> {
     return DataRow(
       cells: [
         DataCell(Text(customerId)),
-        DataCell(Text(_calculateGender(customerId))),
-        DataCell(Text(_calculateAge(customerId))),
+        DataCell(
+          FutureBuilder(
+            future: _calculateGender(customerId),
+            builder: (context, snapshot) {
+                if(snapshot.hasData){
+                }
+            return snapshot.hasData? Text(snapshot.data!) : Text('') ;
+            }
+          ) 
+        ),
+        DataCell(
+          FutureBuilder(
+          future : _calculateAge(customerId),
+          builder: (context,snapshot) {
+
+            return snapshot.hasData? Text(snapshot.data!) : Text('') ;
+          }
+        )),
         DataCell(
           FutureBuilder<String?>(
             future: handler.getShoeName(order.shoes_seq), // 제품명을 데이터베이스에서 가져옴
@@ -299,21 +333,13 @@ Future<double> _calculateTotalAmount(List<Order> customerOrders) async {
 }
 
 
-  String _calculateGender(String customerId) {
-    try {
-      return customerId.endsWith('1') || customerId.endsWith('3') ? '남성' : '여성';
-    } catch (e) {
-      return '알 수 없음';
-    }
+  Future<String> _calculateGender(String customerId)async {
+      String customergender = await handler.getCustomerGender(customerId);
+      return customergender;
   }
 
-  String _calculateAge(String customerId) {
-    try {
-      String birthYear = '19' + customerId.substring(0, 2);
-      int age = DateTime.now().year - int.parse(birthYear);
+  Future<String> _calculateAge(String customerId)async {
+      int age = await handler.getCustomerAge(customerId);
       return age.toString();
-    } catch (e) {
-      return '알 수 없음';
-    }
   }
 }

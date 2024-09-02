@@ -265,7 +265,7 @@ Future<int> updateShoe(Shoes shoe) async {
   return result;
 }
 
-removeAll()async{
+removeOrdered()async{
   final Database db = await initializeDB();
     final int order_queryResult = await db.rawDelete(
     """

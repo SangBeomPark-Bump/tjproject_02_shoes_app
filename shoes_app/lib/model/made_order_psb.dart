@@ -133,60 +133,38 @@ class MadeOrderPsb{
 
     List<String> nameList = ['yubee','gwanwoo','jangbee','yeopho','choseon','heonje','gyenhui'];
 
-    List<Order> orderList = [   ];
-    for (int i = 0; i<10; i++){
-      DateTime paymenttime = DateTime(2024, 1, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
-      orderList.add(Order(
-        branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(7)], 
-        shoes_seq: random.nextInt(6)+1, 
-        order_seq: 1, 
-        quantity: random.nextInt(10)+1,
-        paymenttime: paymenttime,
-      )
-      );
-    }
+    List<Order> orderList = [];
+    int orderq = random.nextInt(10)+10;
 
-    for (int i = 0; i<10; i++){
-      DateTime paymenttime = DateTime(2024,2, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
-      orderList.add(Order(
-        branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(7)], 
-        shoes_seq: random.nextInt(6)+1, 
-        order_seq: 1, 
-        quantity: random.nextInt(10)+1,
-        paymenttime: paymenttime,
-      )
-      );
-    }
+    for(int j = 1 ; j<9; j++){
 
-    for (int i = 0; i<10; i++){
-      DateTime paymenttime = DateTime(2024, 3, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
-      orderList.add(Order(
-        branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(7)], 
-        shoes_seq: random.nextInt(6)+1, 
-        order_seq: 1, 
-        quantity: random.nextInt(10)+1,
-        paymenttime: paymenttime,
-        pickuptime: paymenttime.add(const Duration(days : 1)),
-      )
-      );
-    }
 
-    for (int i = 0; i<10; i++){
-      DateTime paymenttime = DateTime(2024, 4, random.nextInt(30)+1, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
-      orderList.add(Order(
-        branch_branchcode: random.nextInt(3)+1, 
-        customer_id: nameList[random.nextInt(7)], 
-        shoes_seq: random.nextInt(6)+1, 
-        order_seq: 1, 
-        quantity: random.nextInt(10)+1,
-        paymenttime: paymenttime,
-        pickuptime: paymenttime.add(const Duration(days : 1)),
-      )
-      );
-    }
+      for (int i = 0; i<orderq; i++){
+      late int day;
+        if ([1,3,5,7,8,10,12].contains(j)){
+          day = random.nextInt(31)+1;
+        }
+        else if(j == 2){
+          day = random.nextInt(28)+1;
+        }else{
+          day = random.nextInt(30)+1;
+        }
+      
+
+        DateTime paymenttime = DateTime(2024, j, day, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
+        orderList.add(Order(
+          branch_branchcode: random.nextInt(3)+1, 
+          customer_id: nameList[random.nextInt(7)], 
+          shoes_seq: random.nextInt(6)+1, 
+          order_seq: 1, 
+          quantity: random.nextInt(10)+1,
+          paymenttime: paymenttime,
+          pickuptime : ((j == 8 && random.nextInt(10)>7) ? paymenttime.add(const Duration(days: 1)) : null) 
+        )
+        );
+      }
+    print(orderList);
+  }
 
     return orderList;
   }

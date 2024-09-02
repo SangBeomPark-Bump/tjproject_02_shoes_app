@@ -65,7 +65,7 @@ class _TestState extends State<Test> {
                 onPressed: () {
                   initButton();
                 },
-                child: const Text('초기화')),
+                child: const Text('주문목록 초기화')),
           ],
         ),
       ),
@@ -107,7 +107,7 @@ class _TestState extends State<Test> {
       handler.insertCustomer(customer);
     }
     List<Customer> result = await (handler.queryCustomer());
-    print(result);
+    print(result.length);
   }
 
   pressed3() async {
@@ -117,7 +117,7 @@ class _TestState extends State<Test> {
       handler.insertBranch(branches);
     }
     List<Branch> result = await (handler.queryBranch());
-    print(result);
+    print(result.length);
   }
 
   pressed4() async {
@@ -126,7 +126,6 @@ class _TestState extends State<Test> {
     for (Order order in orders) {
       handler.insertOrder(order);
       order.seqMaker();
-      print(order.pickuptime);
     }
     List<Order> result = await (handler.queryOrder());
     print(result.length);
@@ -140,7 +139,7 @@ class _TestState extends State<Test> {
   }
 
   initButton(){
-    handler.removeAll();
+    handler.removeOrdered();
   }
 
 }//End

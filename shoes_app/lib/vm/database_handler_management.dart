@@ -196,26 +196,46 @@ class DatabaseHandler {
     return queryResult.map((e) => Customer.fromMap(e)).toList();
   }
 
-  Future<int?> getCustomerAge(String customerId) async {
+
+  Future<int> getCustomerAge(String customerId) async {
     final db = await initializeDB();
     final List<Map<String, dynamic>> result = await db.query(
       'customer',
       where: 'id = ?',
       whereArgs: [customerId],
     );
+    int age = 0;
     if (result.isNotEmpty) {
       String rnumber = result.first['rnumber'];
       int birthYear = int.parse(rnumber.substring(0, 2));
-      int currentYear = DateTime.now().year;
-      if (birthYear > currentYear % 100) {
-        birthYear += 1900; // 1900년대 생
+      int currentYear = int.parse(DateTime.now().year.toString().substring(2,4));
+      if (birthYear > 24 ) {
+        age = 100 - (birthYear-currentYear);
       } else {
-        birthYear += 2000; // 2000년대 생
+        age = currentYear - birthYear; 
       }
-      return currentYear - birthYear;
     }
-    return null;
+    return age;
   }
+
+  Future<String> getCustomerGender(String customerId) async {
+    final db = await initializeDB();
+    final List<Map<String, dynamic>> result = await db.query(
+      'customer',
+      where: 'id = ?',
+      whereArgs: [customerId],
+    );
+    int gender_int = 0;
+    if (result.isNotEmpty) {
+      String rnumber = result.first['rnumber'];
+      gender_int = int.parse(rnumber.substring(7, 8));
+    }
+    String gender = (gender_int ==1 || gender_int ==3) ? '남성' : '여성';
+    return gender;
+  }
+
+
+
 
   Future<int> updateCustomer(Customer customer) async {
     final Database db = await initializeDB();

@@ -40,7 +40,7 @@ class _MBranchState extends State<MBranch> {
 
   Future<List<String>> _loadAvailableMonth()async{
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
-        SELECT substr(o.pickuptime, 0, 7) as ym
+        SELECT substr(o.paymenttime, 0, 7) as ym
         FROM ordered o
         where ym != 'null'
         GROUP BY ym
@@ -73,18 +73,9 @@ class _MBranchState extends State<MBranch> {
         SELECT b.branchname, SUM(o.quantity) as total_sales
         FROM ordered o
         JOIN branch b ON o.branch_branchcode = b.branchcode
-        WHERE strftime('%Y-%m', o.pickuptime) = ?
+        WHERE strftime('%Y-%m', o.paymenttime) = ?
         GROUP BY b.branchname
       ''', [selectedMonth]);
-      
-      // List<Map<String, dynamic>> rawData = await _database.rawQuery('''
-      //   SELECT b.branchname, SUM(o.quantity) as total_sales
-      //   FROM ordered o
-      //   JOIN branch b ON o.branch_branchcode = b.branchcode
-      //   WHERE strftime('%Y-%m', o.pickuptime) = ?
-      //   GROUP BY b.branchname
-      // ''', [selectedMonth]);
-      print(rawData);
       if (rawData.isNotEmpty){
         return {
           for (var data in rawData)

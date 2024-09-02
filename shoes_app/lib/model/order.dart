@@ -33,7 +33,7 @@ class Order{
     String seqSec = (paymenttime.second * 37).toRadixString(16).padLeft(3, '0');
     String seqMili = (paymenttime.millisecond * 65).toRadixString(16).padLeft(4, '0');
     String seqMicro = (paymenttime.microsecond * 63).toRadixString(16).padLeft(4, '0');
-    seq = seqYear + seqDayMonth + seqHourMinute + customer_id[0]+ customer_id[1]; seqSec + seqMili + seqMicro + order_seq.toString();
+    seq = seqYear + seqDayMonth + seqHourMinute + customer_id[0]+ customer_id[1] + seqSec + seqMili + seqMicro + order_seq.toString();
   }
 
   Order.fromMap(Map<String, dynamic> res)
