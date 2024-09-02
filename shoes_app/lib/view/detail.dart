@@ -21,7 +21,7 @@ class _DetailState extends State<Detail> {
   late int size; //신발 사이즈
   late String brand; //신발 브랜드
   var value = Get.arguments ?? [];
-  int num = 0; //신발 수량 count
+  int quantity = 0; //신발 수량 count
   final box = GetStorage();
   //-------장바구니-----------
   late List<int> wishSeq; 
@@ -30,7 +30,7 @@ class _DetailState extends State<Detail> {
   late List<Uint8List> wishImage; 
   late List<int> wishSize; 
   late List<String> wishBrand;
-  late List<int> wishNum;
+  late List<int> wishQuantity;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _DetailState extends State<Detail> {
     wishImage = box.read<List<Uint8List>>('wishImage') ?? [];
     wishSize = box.read<List<int>>('wishSize') ?? [];
     wishBrand = box.read<List<String>>('wishBrand') ?? [];
-    wishNum = box.read<List<int>>('wishNum') ?? [];
+    wishQuantity = box.read<List<int>>('wishQuantity') ?? [];
   }
 
   @override
@@ -147,18 +147,18 @@ class _DetailState extends State<Detail> {
                             IconButton(
                               onPressed: () {
                                 setState(() {
-                                  if (num > 0) num -= 1;
+                                  if (quantity > 0) quantity -= 1;
                                 });
                               },
                               icon: Icon(Icons.remove,
                                   color:
                                       const Color.fromARGB(255, 122, 163, 195)),
                             ),
-                            Text("$num"),
+                            Text("$quantity"),
                             IconButton(
                               onPressed: () {
                                 setState(() {
-                                  num += 1;
+                                  quantity += 1;
                                 });
                               },
                               icon: Icon(Icons.add, color: Colors.red),
@@ -182,7 +182,7 @@ class _DetailState extends State<Detail> {
                       SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          if(num!=0){
+                          if(quantity!=0){
                           addToCart();
                           Get.back();
                           }else{}
@@ -215,7 +215,7 @@ class _DetailState extends State<Detail> {
     wishImage.add(image);
     wishSize.add(size);
     wishBrand.add(brand);
-    wishNum.add(num);
+    wishQuantity.add(quantity);
     saveStorage();
   }
 
@@ -227,7 +227,7 @@ class _DetailState extends State<Detail> {
     box.write('wishImage', wishImage);
     box.write('wishSize', wishSize);
     box.write('wishBrand', wishBrand);
-    box.write('wishNum', wishNum);
+    box.write('wishQuantity', wishQuantity);
   }
 
 

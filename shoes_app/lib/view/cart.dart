@@ -41,11 +41,15 @@ class _CartState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    item = ["강남점", "신도림점", "노원점"];
-    dropdownValue = "강남점";
+    item = [];
+    // item = ["강남점", "신도림점", "노원점"];
+    dropdownValue = "";
     wishOrderseq=1;
     readcartBox();
+    readBranch();
   }
+
+
   readcartBox(){
     // GetStorage에서 장바구니 데이터 읽어오기
     wishSeq = box.read<List<int>>('wishSeq') ?? [];
@@ -56,6 +60,14 @@ class _CartState extends State<CartPage> {
     wishBrand = box.read<List<String>>('wishBrand') ?? [];
     wishQuantity = box.read<List<int>>('wishQuantity') ?? [] ;
   }
+
+//dropdown branch
+readBranch()async{
+  item = await carthandler.queryBranch();
+  dropdownValue = item.first;
+  setState(() {
+  });
+}
   
 
   @override
@@ -75,25 +87,44 @@ class _CartState extends State<CartPage> {
                   padding: EdgeInsets.only(right: 50),
                   child: Text('수령장소', style: TextStyle()),
                 ),
-                DropdownButton<String>( //지점 드랍다운 버튼
-                  dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                  value: dropdownValue,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: item.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList(),
+                  DropdownButton<String>(
+                    dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+                    value: dropdownValue,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: item.map((String item){
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item)
+                        );
+                    }).toList(),
                   onChanged: (value) {
                     setState(() {
                       dropdownValue = value!;
                     });
                   },
-                ),
+                  )
+                // DropdownButton<String>( //지점 드랍다운 버튼
+                //   dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+                //   value: dropdownValue,
+                //   icon: const Icon(Icons.keyboard_arrow_down),
+                //   items: item.map((String item) {
+                //     return DropdownMenuItem<String>(
+                //       value: item,
+                //       child: Text(item),
+                //     );
+                //   }).toList(),
+                //   onChanged: (value) {
+                //     setState(() {
+                //       dropdownValue = value!;
+                //     });
+                //   },
+                // ),
               ],
             ),
           ),
+          wishSeq.isEmpty ? 
+          const Center(child: Text('장바구니에 담긴 물건이 없습니다.'),)
+          :
           Expanded( //장바구니 목록 
             child: ListView.builder(
               itemCount: wishSeq.length,
@@ -177,8 +208,9 @@ class _CartState extends State<CartPage> {
                 child: 
                 ElevatedButton( //구매 버튼
                   onPressed: () {
-                    wishSeq.isEmpty ? erorrSnackBar() :
-                    purchaseDialog(); //구매 확인 다이얼로그
+                    wishSeq.isEmpty ? 
+                    erorrSnackBar() 
+                    :purchaseDialog(); //구매 확인 다이얼로그
                   },
                   child: const Text("구매"),
                 ),
@@ -211,7 +243,6 @@ class _CartState extends State<CartPage> {
             cartInsertOrder();
             deleteCart();
             Get.back(); // 다이얼로그 닫기
-            Get.back();
           },
           child: const Text('예'),
         ),
@@ -254,8 +285,7 @@ deleteCart(){
   cartInsertOrder(){
     for(int i=0 ; i <= wishSeq.length-1 ; i++){
       Order orders = Order(
-        branch_branchcode:
-        dropdownValue == "강남점" ? 1 : dropdownValue == "신도림점" ? 2 : 3, 
+        branch_branchcode: item.indexOf(dropdownValue)+1,
         // dropdown 수정 or if문
         customer_id: box.read('userId'), 
         shoes_seq: wishSeq[i],

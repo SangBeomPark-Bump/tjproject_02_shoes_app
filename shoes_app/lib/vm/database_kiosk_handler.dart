@@ -1,11 +1,13 @@
 import 'package:path/path.dart';
-import 'package:shoes_app/model/branch.dart';
+import 'package:shoes_app/model/kiosk.dart';
 import 'package:shoes_app/model/order.dart';
+import 'package:shoes_app/vm/database_handler_management.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqlite_api.dart';
 
-class DatabaseCarthandler{
-    
-    //db생성 
+class DatabaseKioskHandler{
+
+  //db생성
     Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
     return openDatabase(
@@ -61,68 +63,55 @@ class DatabaseCarthandler{
   }
 
 
-//<<<<장바구니에서 DB ORDER Table 입력>>>
-/*
-  seq : Order seqmaker
-  branchcode, customerid,shoesseq,quantity
-  paymenttime : datetime
-*/
-Future<int> insertOrder(Order order) async {
-  int result = 0;
-  final Database db = await initializeDB();
-  result = await db.rawInsert(
-    """
-      INSERT INTO ordered(seq, branch_branchcode, customer_id, shoes_seq, order_seq, quantity, paymenttime, canceltime, pickuptime)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-    [
-      order.seq,
-      order.branch_branchcode,
-      order.customer_id,
-      order.shoes_seq,
-      order.order_seq,
-      order.quantity,
-      order.paymenttime.toString(),
-      order.canceltime.toString(),
-      order.pickuptime.toString()
-    ],
-  );
-  return result;
-}
-
-Future<int> insertId(Order order) async {
-  int result = 0;
-  final Database db = await initializeDB();
-  result = await db.rawInsert(
-    """
-      INSERT INTO ordered(seq, branch_branchcode, customer_id, shoes_seq, order_seq, quantity, paymenttime, canceltime, pickuptime)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-    [
-      order.seq,
-      order.branch_branchcode,
-      order.customer_id,
-      order.shoes_seq,
-      order.order_seq,
-      order.quantity,
-      order.paymenttime.toString(),
-      order.canceltime.toString(),
-      order.pickuptime.toString()
-    ],
-  );
-  return result;
-}
-
-//<<<<<<<<<<<branch검색>>>>>>>>>>
-Future<List<String>> queryBranch() async {
+//kiosk 회원가입 여부 확인
+//Customer table query
+Future<int> kioskqueryCustomer(Customer customer) async {
   final Database db = await initializeDB();
   final List<Map<String, Object?>> queryResult = await db.rawQuery(
-    'SELECT branchname FROM branch',
+    'SELECT count(*) hasID FROM customer where id = ? and password = ?', [customer.id , customer.password]
   );
-  List <String> result = queryResult.map((e) => e['branchname'] as String).toList();
+  final int result = queryResult.isNotEmpty ? queryResult.first['hasID'] as int : 0;
   return result;
-  
+} 
+
+
+//kiosk id,주문번호  확인
+//Ordered table query
+Future<List<Map<String,dynamic>>> kioskqueryOrder(Kiosk kiosk)async{
+  final Database db = await initializeDB();
+  final List<Map<String ,Object?>> queryResult = await db.rawQuery(
+    '''
+    select o.seq ,o.shoes_seq, o.quantity, s.shoesname, s.image, o.order_seq
+    from ordered as o
+    join shoes as s on o.shoes_seq = s.seq
+    where o.seq like ? and o.customer_id = ? and o.pickuptime is 'null'
+    ''', ['${kiosk.seq}%', kiosk.customer_id]
+  );
+    // print(queryResult);
+    // print(queryResult.first['image']);
+    
+    return queryResult.isEmpty ? [] : queryResult;
 }
+
+//kiosk 수령시 PickupTime update
+Future<int> updateOrder(Kiosk kiosk) async {
+  int result = 0;
+  final Database db = await initializeDB();
+  result = await db.rawUpdate(
+    """
+      UPDATE ordered
+      SET pickuptime = ?
+      WHERE seq like ? and customer_id = ? 
+    """,
+    [ kiosk.pickuptime.toString(),
+      "${kiosk.seq}%",
+      kiosk.customer_id
+    ],
+
+  );
+  return result;
+}
+
 
 
 
