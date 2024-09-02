@@ -7,11 +7,13 @@ class Kiosk{
   String customer_id;
   DateTime? pickuptime;
   Uint8List? image;
+  int branchcode;
 
   Kiosk({
     required this.seq,
     required this.customer_id,
     this.pickuptime,
     this.image,
+    required this.branchcode
   });
 }

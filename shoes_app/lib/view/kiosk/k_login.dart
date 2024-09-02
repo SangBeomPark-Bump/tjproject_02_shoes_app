@@ -45,7 +45,7 @@ class _KLoginState extends State<KLogin> {
                 fontSize: 30
               ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               //idd
               TextField(
                 controller: idController,
@@ -53,15 +53,16 @@ class _KLoginState extends State<KLogin> {
                   hintText: "ID"
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               //password 입력
               TextField(
                 controller: passwordController,
+                obscureText: true,
                 decoration: const InputDecoration(
                   hintText: "Password"
                 ),
               ),
-              SizedBox(height: 50,),
+              const SizedBox(height: 50,),
               ElevatedButton(
                 onPressed: () async{
                   Customer customer = Customer(
@@ -69,23 +70,18 @@ class _KLoginState extends State<KLogin> {
                     password:  passwordController.text.trim()
                   );
                     int result = await kioskHandler.kioskqueryCustomer(customer);
-                    if(idController.text.trim().isEmpty || 
-                    passwordController.text.trim().isEmpty){
-                      errorSnackBar();
-                    }else{
-                    if(result == 0){
-                      notCorrectDialog();
-                    }else{
-                      loginDialog();
-                    }
-                    }
-                  
-                  print(kioskHandler.kioskqueryCustomer(customer) );
-                // 회원여부 체크(id)
-                // 비밀번호 불일치 (id and password)
-                // 성공시 넘어가고 id 저장 (getStorage)
-                // Get.to(KHome());
-              }, child: const Text('Sign In')
+                      if(idController.text.trim().isEmpty || 
+                        passwordController.text.trim().isEmpty){
+                          errorSnackBar();
+                      }else{
+                        if(result == 0){
+                          notCorrectDialog();
+                          }else{
+                            loginDialog();
+                          }
+                      }
+                }, 
+              child: const Text('Sign In')
               )
               
             ],
@@ -139,7 +135,7 @@ errorSnackBar(){ //get package SnackBar
     "경고",
    "ID,Password를 모두 입력하세요",
    snackPosition: SnackPosition.BOTTOM,   //기본값 = top
-   duration: Duration(seconds: 2),
+   duration: const Duration(seconds: 2),
    backgroundColor: Theme.of(context).colorScheme.error,
    );
 }

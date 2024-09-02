@@ -64,7 +64,7 @@ class _CartState extends State<CartPage> {
 //dropdown branch
 readBranch()async{
   item = await carthandler.queryBranch();
-  dropdownValue = item.first;
+  dropdownValue = item[0];
   setState(() {
   });
 }
@@ -242,7 +242,11 @@ readBranch()async{
             // 구매 처리 로직
             cartInsertOrder();
             deleteCart();
+            readcartBox(); //화면 다시 그리기
             Get.back(); // 다이얼로그 닫기
+            setState(() {
+              
+            });
           },
           child: const Text('예'),
         ),

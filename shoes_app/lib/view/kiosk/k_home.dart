@@ -23,6 +23,7 @@ class _KHomeState extends State<KHome> {
   late List<Map<String,dynamic>> myshoes;
   late String orderNum;
   late String shoesCount;
+  late int branchcode;
 
   @override
   void initState() {
@@ -32,6 +33,7 @@ class _KHomeState extends State<KHome> {
     myshoes =[];
     orderNum = "";
     shoesCount="";
+    branchcode =1;
   }
 
 
@@ -44,7 +46,7 @@ class _KHomeState extends State<KHome> {
       body: Center(
           child: Column(
         children: [
-          Padding(
+                    Padding(
             padding: const EdgeInsets.only(top: 150,right: 200, left: 200),
             child: TextField(
               controller: orderSeqController,
@@ -52,19 +54,21 @@ class _KHomeState extends State<KHome> {
               maxLength: 15,
             ),
           ),
-                    ElevatedButton(
+                    ElevatedButton( //조회버튼
               onPressed: () async{
                 if(orderSeqController.text.trim().length == 15){ // 일치
                   Kiosk kiosk = Kiosk(
                   seq: orderSeqController.text.trim(),
                   customer_id: box.read('kioskID'),
+                  branchcode: branchcode
                   );
                   myshoes = await kioskHandler.kioskqueryOrder(kiosk); // 주문번호 일치 확인(16자리까지 입력, 해당 목록 모두 보이게하기)
                   if(myshoes.isNotEmpty){ //일치 주문번호
-                  orderNum = myshoes.first['seq'].toString().substring(1,15); 
+                  orderNum = myshoes.first['seq'].toString().substring(0,15); 
                   }
                   else{ //불일치
-                  errorSnackBar('경고','일치하는 주문번호가 없습니다.');
+                  errorDialog('경고','일치하는 주문번호가 없습니다.');
+                  orderNum = orderSeqController.text.trim();
                   }
                 }else{ //15자리 아닐때
                   errorSnackBar('경고', '주문번호 15자리를 모두 입력하세요.');
@@ -135,7 +139,7 @@ class _KHomeState extends State<KHome> {
                                       pickUpDialog(index);
                                       }, 
                                       child: const Text('수령하기')),
-              
+
                             ],
                           ),
                         ),
@@ -153,6 +157,7 @@ class _KHomeState extends State<KHome> {
   }
 
 //FFFFFFFFFFFFFF
+//수령하기 버튼
   pickUpDialog(index) {
     Get.defaultDialog(
         title: "확인",
@@ -165,13 +170,18 @@ class _KHomeState extends State<KHome> {
                 Kiosk kiosk = Kiosk(
                   seq: myshoes[index]['seq'],
                   pickuptime: DateTime.now(),
-                  customer_id: box.read('kioskID')
+                  customer_id: box.read('kioskID'),
+                  branchcode: branchcode
                   );
-                await kioskHandler.updateOrder(kiosk);
-                myshoes = await kioskHandler.kioskqueryOrder(kiosk);
-                setState(() {});
-                Get.back();
-
+                  int result = await kioskHandler.updateOrder(kiosk);
+                  if(result == 0){
+                    errorSnackBar('경고', '문제가 발생했습니다. \n 관리자에게 문의하세요');
+                  }else{
+                    myshoes = await kioskHandler.kioskqueryOrder(kiosk);
+                    Get.back();
+                  }setState(() {
+                    
+                  });
               },
               child: const Text('확인'))
         ]);
@@ -187,6 +197,23 @@ errorSnackBar(title,message){ //get package SnackBar
    backgroundColor: Theme.of(context).colorScheme.error,
    );
 }
+
+//불일치 dialog
+  errorDialog(title,message) {
+    Get.defaultDialog(
+        title: title,
+        middleText: message,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        barrierDismissible: false,
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text('확인'))
+        ]);
+  }
+
 
 
 
