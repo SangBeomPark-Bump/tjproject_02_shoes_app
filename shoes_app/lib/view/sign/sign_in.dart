@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/view/management/m_home.dart';
 import 'package:shoes_app/view/sign/sign_up.dart';
+import 'package:shoes_app/view/test.dart';
 import 'package:shoes_app/vm/database_sign_up_handler.dart';
 
 class SignInPage extends StatefulWidget {
@@ -42,92 +43,133 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('로그인'),
-      ),
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center, // 버튼을 중앙에 정렬
-              children: [
-                  TextFormField(
-                    controller: _idController,
-                    decoration: const InputDecoration(
-                      labelText: 'Id',
-                      border: OutlineInputBorder(),
+      body: Stack(
+        children: [
+          Image.asset(
+            'images/Sign in.png',
+            fit: BoxFit.fill,
+          ),
+          Center(
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // 버튼을 중앙에 정렬
+                  children: [
+                    const Text('더조은 신발가게', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25
+                    ),),
+                    const SizedBox(height: 50,),
+                    const Text('Sign in', 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '아이디를 입력해주세요';
-                      }
-                      if (isExist ==0){
-                        return '아이디나 비밀번호가 일치하지 않습니다';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'PassWord',
-                      border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '비밀번호를 입력해주세요';
-                      }
-                      if (isExist ==0){
-                        return '아이디나 비밀번호가 일치하지 않습니다';
-                      }
-                      // 간단한 이메일 유효성 검사
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20,),
-            //////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////////////////테스트 접근용 추후 삭제///////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////////////////////////////////////////
-                ElevatedButton(
-                  onPressed: () {
-                    isExist = 0;
-                    setState(() {});
-                    _submitForm(context);
-                  },
-                  child: const Text('Sign in'),
+                    const SizedBox(height: 15,),
+                      TextFormField(
+                        controller: _idController,
+                        decoration: const InputDecoration(
+                          labelText: 'Id',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(30))
+                          ),
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '아이디를 입력해주세요';
+                          }
+                          if (isExist ==0){
+                            return '아이디나 비밀번호가 일치하지 않습니다';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 8.0),
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'PassWord',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(30))
+                          ),
+                          fillColor: Colors.white,
+                          filled: true
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '비밀번호를 입력해주세요';
+                          }
+                          if (isExist ==0){
+                            return '아이디나 비밀번호가 일치하지 않습니다';
+                          }
+                          // 간단한 이메일 유효성 검사
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white
+                          ),
+                          onPressed: () {
+                            isExist = 0;
+                            setState(() {});
+                            _submitForm(context);
+                          },
+                          child: const Text('Sign In'),
+                        ),
+                        SizedBox(
+                          width: 50,
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.blue,
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignUpPage()),
+                            );
+                          },
+                          child: const Text('Sign Up'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20), // 버튼 간의 간격 조정
+                //////////////////////////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    const SizedBox(height: 20), // 버튼 간의 간격 조정
+                    ElevatedButton(
+                      onPressed: () {
+                        // 관리자 페이지로 이동
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Test()),
+                        );
+                      },
+                      child: const Text('Test'),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20), // 버튼 간의 간격 조정
-            //////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////////////////////////////////////////
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpPage()),
-                    );
-                  },
-                  child: const Text('회원가입'),
-                ),
-                const SizedBox(height: 20), // 버튼 간의 간격 조정
-                ElevatedButton(
-                  onPressed: () {
-                    // 관리자 페이지로 이동
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MHome()),
-                    );
-                  },
-                  child: const Text('Management'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
