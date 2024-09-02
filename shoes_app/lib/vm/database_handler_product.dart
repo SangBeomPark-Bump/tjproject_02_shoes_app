@@ -64,7 +64,7 @@ class DatabaseHandler_Product{
     final List<Map<String, Object?>> queryResult = await db.rawQuery(
       """
           SELECT 
-              s.brand,
+              s.brand AS brand,
               strftime('%Y-%m', o.pickuptime) AS orderMonth,
               SUM(s.price * o.quantity) AS totalPriceQuantity
           FROM 
@@ -75,7 +75,7 @@ class DatabaseHandler_Product{
               orderMonth IS NOT NULL
               AND o.pickuptime IS NOT 'null'
               AND o.canceltime IS 'null'
-              AND s.brand = ?
+              AND brand = ?
           GROUP BY 
               orderMonth
           ORDER BY 
@@ -83,6 +83,7 @@ class DatabaseHandler_Product{
       """
     ,[brand]
     );
+
     
 
     // 결과를 List<List<dynamic>> 형식으로 변환
@@ -99,6 +100,62 @@ class DatabaseHandler_Product{
 
     return result;
   }
+
+
+    Future<List<List<dynamic>>> queryTotalPriceByMonth2(String brand) async {
+    final Database db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.rawQuery(
+      """ SELECT brand, orderMonth, sum(sellprice) as totalPriceQuantity
+          FROM(
+            SELECT 
+              s.brand AS brand,
+              strftime('%Y-%m', o.pickuptime) AS orderMonth,
+              s.price * o.quantity as sellprice
+            FROM 
+              'ordered' o
+            JOIN 
+              shoes s ON o.shoes_seq = s.seq
+            WHERE 
+              orderMonth IS NOT NULL
+              AND o.pickuptime != 'null'
+              AND o.canceltime ='null'
+              AND brand = ?
+          )
+          GROUP BY 
+              orderMonth
+          ORDER BY 
+              orderMonth
+
+      """
+    ,[brand]
+    );
+    // print(queryResult);
+
+    
+
+    // 결과를 List<List<dynamic>> 형식으로 변환
+    List<List<dynamic>> result = queryResult.map((row) {
+      // orderMonth를 DateTime으로 변환
+      String orderMonth = row['orderMonth'] as String;
+      DateTime dateTime = DateTime.parse(orderMonth+'-00'); // 월을 1일로 설정
+
+      // totalPriceQuantity를 int로 변환
+      int totalPriceQuantity = row['totalPriceQuantity'] as int;
+
+
+      return [dateTime, totalPriceQuantity];
+    }).toList();
+
+    return result;
+  }
+
+
+
+
+
+
+
+
 
 
 //query

@@ -21,6 +21,7 @@ class _MProductState extends State<MProduct> {
     // DatabaseHandlerProduct 클래스의 인스턴스를 생성하고 데이터 가져오기
     dbHandler = DatabaseHandler_Product();
     keysFutre = dbHandler.queryProductkeys();
+    
     keyidx = 0;
 
   }
@@ -40,7 +41,6 @@ class _MProductState extends State<MProduct> {
               DropdownButton(
                 value: keys.data![keyidx],
                 items: keys.data!.map((key) {
-                  print(dbHandler.queryTotalPriceByMonth(keys.data![0]));
                   return DropdownMenuItem(
                     value: key,
                     child: Text(key));
@@ -51,7 +51,7 @@ class _MProductState extends State<MProduct> {
                 }
               ),
               FutureBuilder<List<List<dynamic>>>(
-                future: dbHandler.queryTotalPriceByMonth(keys.data![0]),
+                future: dbHandler.queryTotalPriceByMonth(keys.data![keyidx]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();

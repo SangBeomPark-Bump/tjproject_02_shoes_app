@@ -47,7 +47,6 @@ class _MBranchState extends State<MBranch> {
 
         availableMonths.add(i['ym']);
       }
-      print(availableMonths);
       if(monthInitial){
         monthInitial = false;
         selectedMonth = availableMonths[availableMonths.length-1];}
@@ -135,7 +134,7 @@ class _MBranchState extends State<MBranch> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.arrow_back),
+                                icon: const Icon(Icons.arrow_back),
                                 onPressed:() => _onPreviousMonth(availableMonths.data!),
                                 color: availableMonths.data!.indexOf(selectedMonth) > 0
                                     ? Colors.black

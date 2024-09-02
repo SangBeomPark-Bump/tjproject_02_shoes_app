@@ -44,7 +44,7 @@ class _KHomeState extends State<KHome> {
       body: Center(
           child: Column(
         children: [
-                    Padding(
+          Padding(
             padding: const EdgeInsets.only(top: 150,right: 200, left: 200),
             child: TextField(
               controller: orderSeqController,
@@ -135,7 +135,7 @@ class _KHomeState extends State<KHome> {
                                       pickUpDialog(index);
                                       }, 
                                       child: const Text('수령하기')),
-
+              
                             ],
                           ),
                         ),
@@ -167,11 +167,11 @@ class _KHomeState extends State<KHome> {
                   pickuptime: DateTime.now(),
                   customer_id: box.read('kioskID')
                   );
-                  int result = await kioskHandler.updateOrder(kiosk);
-                  if(result == 1){
-                    await kioskHandler.updateOrder(kiosk);
-                  Get.back();
-                  }
+                await kioskHandler.updateOrder(kiosk);
+                myshoes = await kioskHandler.kioskqueryOrder(kiosk);
+                setState(() {});
+                Get.back();
+
               },
               child: const Text('확인'))
         ]);
