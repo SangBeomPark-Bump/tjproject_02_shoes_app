@@ -1,11 +1,8 @@
-import 'dart:ffi';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shoes_app/view/sign/sign_in.dart';
 import 'package:shoes_app/vm/database_handler.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:shoes_app/vm/database_handler_order.dart';
 import 'detail.dart';
 
 class AppHome extends StatefulWidget {
@@ -16,16 +13,15 @@ class AppHome extends StatefulWidget {
 }
 
 class _AppHomeState extends State<AppHome> {
-  late DatabaseHandler handler;
+  late DatabaseHandlerOrder handler;
   bool _isSearching = false;
+
   final TextEditingController _searchController = TextEditingController();
-  late int selectIndex;
 
   @override
   void initState() {
     super.initState();
-    handler = DatabaseHandler();
-    selectIndex = 0;
+    handler = DatabaseHandlerOrder();
   }
 
   @override
@@ -40,7 +36,7 @@ class _AppHomeState extends State<AppHome> {
                     border: InputBorder.none,
                   ),
                   onSubmitted: (query) {
-                    // 여기에 검색 기능을 구현하세요
+                    setState(() {});
                   },
                 )
               : const Text(''),
@@ -69,9 +65,21 @@ class _AppHomeState extends State<AppHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 15),
                 child: Text(
-                  "brand",
+                  "Shoes",
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Text(
+                  !_isSearching
+                      ? "Nike"
+                      : (_searchController.text.isEmpty ? "" : "Result"),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -79,47 +87,12 @@ class _AppHomeState extends State<AppHome> {
                 ),
               ),
               FutureBuilder(
-                future: handler.queryShoes(),
+                future: _isSearching
+                    ? handler.queryShoesByQuery(_searchController.text)
+                    : handler.queryNike(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: 0.75,
-                      ),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        selectIndex = index;
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(() => Detail(), arguments: [
-                              snapshot.data![index].seq,
-                              snapshot.data![index].shoesname,
-                              snapshot.data![index].price,
-                              snapshot.data![index].image,
-                              snapshot.data![index].size,
-                              snapshot.data![index].brand,
-                            ]);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(16.0), // 모서리를 둥글게 설정
-                              child: Image.memory(
-                                snapshot.data![index].image,
-                                fit: BoxFit.contain, // 이미지가 잘리지 않도록 조정
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                    return _buildGridView(snapshot.data!);
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -127,7 +100,62 @@ class _AppHomeState extends State<AppHome> {
                   }
                 },
               ),
-              const SizedBox(height: 20),
+              Visibility(
+                visible: !_isSearching,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    "NewBalance",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: !_isSearching,
+                child: FutureBuilder(
+                  future: handler.queryNewB(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return _buildGridView(snapshot.data!);
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
+              ),
+              Visibility(
+                visible: !_isSearching,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    "Prospecs",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: !_isSearching,
+                child: FutureBuilder(
+                  future: handler.queryPro(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return _buildGridView(snapshot.data!);
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ));
@@ -165,98 +193,75 @@ void _showLogoutConfirmationDialog(BuildContext context) {
   );
 }
 
-/*
-  Widget _buildBrandSection(String brand, Uint8List images) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            brand,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        FutureBuilder(
-          future: handler.queryShoes(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  selectIndex = index;
-                  return GestureDetector(
-                    onTap: () {
-                      Get.to(() => Detail(), arguments: [
-                        snapshot.data![index].seq,
-                        snapshot.data![index].shoesname,
-                        snapshot.data![index].price,
-                        snapshot.data![index].size,
-                        snapshot.data![index].image,
-                        snapshot.data![index].brand,
-                      ]);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(16.0), // 모서리를 둥글게 설정
-                        child: Image.memory(
-                          images,
-                          fit: BoxFit.contain, // 이미지가 잘리지 않도록 조정
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-}
-*/
-class DetailPage extends StatelessWidget {
-  final String imageUrl;
-
-  const DetailPage({required this.imageUrl, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detail'),
-      ),
-      body: Center(
+Widget _buildGridView(List shoes) {
+  return GridView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 0.75,
+    ),
+    itemCount: shoes.length,
+    itemBuilder: (context, index) {
+      final shoe = shoes[index];
+      return GestureDetector(
+        onTap: () {
+          Get.to(() => Detail(), arguments: [
+            shoe.seq,
+            shoe.shoesname,
+            shoe.price,
+            shoe.image,
+            shoe.size,
+            shoe.brand,
+          ]);
+        },
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16.0), // 모서리를 둥글게 설정
-            child: Image.asset(
-              imageUrl,
-              fit: BoxFit.contain, // 이미지가 잘리지 않도록 조정
+            borderRadius: BorderRadius.circular(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 170,
+                    height: 130,
+                    child: Image.memory(
+                      shoe.image,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        shoe.brand,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        shoe.shoesname,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("${shoe.price}원",
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold)),
+                      Text("SIZE ${shoe.size}", style: TextStyle(fontSize: 11)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    },
+  );
 }
