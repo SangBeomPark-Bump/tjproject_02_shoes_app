@@ -61,13 +61,13 @@ class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        actions: [
+        backgroundColor: Colors.white,
+        actions: const [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-                onTap: () => Get.to(CartPage()),
-                child: Icon(Icons.shopping_cart)),
+            padding: EdgeInsets.all(8.0),
+            child: Icon(Icons.shopping_cart),
           )
         ],
       ),
@@ -75,25 +75,41 @@ class _DetailState extends State<Detail> {
         child: Center(
           child: Column(
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-                color: Colors.grey,
-                child: Image.memory(image, width: 100),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Card(
+                  elevation: 5,
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width-10,
+                        height: 270,
+                        child: Image.memory(image, width: 100)
+                      ),
+                //브랜드 값 가져옴
+              Text(
+                shoesname,
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
               ),
-              Text(brand,
-                  style:
-                      TextStyle(fontSize: 15, fontWeight: FontWeight.normal)),
-              //브랜드 값 가져옴
-              Text(shoesname,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-              //제품명 값 가져옴
-              Text("${price.toString()}원",
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red)),
-              //가격 값 가져옴
+                //제품명 값 가져옴
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                child: Text(
+                  "${price.toString()}₩",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red)
+                ),
+              ),
+                    ],
+                  ),
+                ),
+              ),
+
+
+                      //가격 값 가져옴
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +117,7 @@ class _DetailState extends State<Detail> {
                   //사이즈 선택하는 컨테이너
                   Container(
                     width: 150,
-                    height: 120,
+                    height: 130,
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
@@ -111,29 +127,47 @@ class _DetailState extends State<Detail> {
                             offset: Offset(0, 5))
                       ],
                       borderRadius: BorderRadius.circular(15),
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: const Color.fromARGB(255, 255, 255, 255),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         //신발 아이콘 이미지 삽입?
-                        Icon(Icons.skateboarding, size: 60),
+                        Image.asset(
+                          'images/shoes_icon.png',
+                          height: 100,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('SIZE',
+                            const Text('SIZE :',
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold)),
-                            Text("$size")
+                            Text(" $size")
                           ],
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(
+                    width: 20
+                    ),
                   Column(
                     children: [
                       Container(
+                        width: 150,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(0.7),
+                                blurRadius: 5.0,
+                                spreadRadius: 0.0,
+                                offset: const Offset(0, 5))
+                          ],
+                          borderRadius: BorderRadius.circular(15),
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -143,9 +177,9 @@ class _DetailState extends State<Detail> {
                                   if (quantity > 0) quantity -= 1;
                                 });
                               },
-                              icon: Icon(Icons.remove,
+                              icon: const Icon(Icons.remove,
                                   color:
-                                      const Color.fromARGB(255, 122, 163, 195)),
+                                      Color.fromARGB(255, 122, 163, 195)),
                             ),
                             Text("$quantity"),
                             IconButton(
@@ -158,21 +192,8 @@ class _DetailState extends State<Detail> {
                             ),
                           ],
                         ),
-                        width: 150,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.7),
-                                blurRadius: 5.0,
-                                spreadRadius: 0.0,
-                                offset: Offset(0, 5))
-                          ],
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color.fromARGB(255, 255, 255, 255),
-                        ),
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: 26),
                       ElevatedButton(
                         onPressed: () {
                           if (quantity != 0) {
@@ -180,13 +201,14 @@ class _DetailState extends State<Detail> {
                             Get.back();
                           } else {}
                         },
-                        child: Text('장바구니 담기',
-                            style: TextStyle(color: Colors.black87)),
                         style: ElevatedButton.styleFrom(
+                          elevation: 5,
                           backgroundColor:
                               const Color.fromARGB(255, 215, 215, 215),
                           fixedSize: Size(150, 40),
                         ),
+                        child: const Text('장바구니 담기',
+                            style: TextStyle(color: Colors.black87)),
                       ),
                     ],
                   ),

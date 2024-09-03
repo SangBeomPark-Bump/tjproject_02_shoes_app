@@ -88,7 +88,7 @@ class _MDateState extends State<MDate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Monthly Sales'),
+        title: const Text('Monthly Sales'),
         leading: IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
@@ -107,7 +107,7 @@ class _MDateState extends State<MDate> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: _onPreviousMonth, // 이전 달로 이동
                 ),
                 DropdownButton<String>(
@@ -122,7 +122,7 @@ class _MDateState extends State<MDate> {
                   onChanged: (newMonth) => _onMonthChanged(newMonth!),
                 ),
                 IconButton(
-                  icon: Icon(Icons.arrow_forward),
+                  icon: const Icon(Icons.arrow_forward),
                   onPressed: _onNextMonth, // 다음 달로 이동
                 ),
               ],
@@ -143,7 +143,7 @@ class _MDateState extends State<MDate> {
                         yValueMapper: (_SalesData sales, _) => sales.totalSales,
                         pointColorMapper: (_SalesData sales, _) => _getColorForMonth(sales.month),
                         name: '매출',
-                        dataLabelSettings: DataLabelSettings(isVisible: true),
+                        dataLabelSettings: const DataLabelSettings(isVisible: true),
                       )
                     ],
                   ),

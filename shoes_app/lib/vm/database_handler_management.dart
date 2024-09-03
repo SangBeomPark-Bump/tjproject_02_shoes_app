@@ -301,6 +301,21 @@ class DatabaseHandler {
     return null;
   }
 
+    Future<Customer?> getCustomerById(String customerId) async {
+    final db = await initializeDB();
+    final List<Map<String, dynamic>> maps = await db.query(
+      'customer', // 고객 테이블 이름
+      where: 'id = ?',
+      whereArgs: [customerId],
+    );
+
+    if (maps.isNotEmpty) {
+      return Customer.fromMap(maps.first);
+    } else {
+      return null; // 고객이 없을 경우 null 반환
+    }
+  }
+
   Future<int> updateShoe(Shoes shoe) async {
     final Database db = await initializeDB();
     return await db.update(

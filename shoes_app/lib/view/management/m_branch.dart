@@ -43,18 +43,18 @@ class _MBranchState extends State<MBranch> {
         where ym != 'null'
         AND o.canceltime IS 'null'
         GROUP BY ym
-      ''',
-    );
-    List<String> availableMonths = [];
-    for (Map i in rawData) {
-      availableMonths.add(i['ym']);
-    }
-    print(availableMonths);
-    if (monthInitial) {
-      monthInitial = false;
-      selectedMonth = availableMonths[availableMonths.length - 1];
-    }
-    return availableMonths;
+      ''', );
+      List<String> availableMonths = [];
+      for (Map i in rawData){
+
+        availableMonths.add(i['ym']);
+      }
+      if(monthInitial){
+        monthInitial = false;
+        selectedMonth = availableMonths[availableMonths.length-1];}
+      return availableMonths;
+
+
   }
 
   Future<Map<String, double>> _loadBranchSalesData(selectedMonth) async {
@@ -130,42 +130,12 @@ class _MBranchState extends State<MBranch> {
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_back),
-                                    onPressed: () =>
-                                        _onPreviousMonth(availableMonths.data!),
-                                    color: availableMonths.data!
-                                                .indexOf(selectedMonth) >
-                                            0
-                                        ? Colors.black
-                                        : Colors.grey, // 비활성화 색상 적용
-                                  ),
-                                  DropdownButton<String>(
-                                    value: selectedMonth,
-                                    items: availableMonths.data!.map((month) {
-                                      return DropdownMenuItem(
-                                        value: month,
-                                        child: Text('$month 월'),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newMonth) {
-                                      _onMonthChanged(newMonth!);
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.arrow_forward),
-                                    onPressed: () =>
-                                        _onNextMonth(availableMonths.data!),
-                                    color: availableMonths.data!
-                                                .indexOf(selectedMonth) <
-                                            availableMonths.data!.length - 1
-                                        ? Colors.black
-                                        : Colors.grey, // 비활성화 색상 적용
-                                  ),
-                                ],
+                              IconButton(
+                                icon: const Icon(Icons.arrow_back),
+                                onPressed:() => _onPreviousMonth(availableMonths.data!),
+                                color: availableMonths.data!.indexOf(selectedMonth) > 0
+                                    ? Colors.black
+                                    : Colors.grey, // 비활성화 색상 적용
                               ),
                               FutureBuilder<Map<String, double>>(
                                 future: _loadBranchSalesData(selectedMonth),

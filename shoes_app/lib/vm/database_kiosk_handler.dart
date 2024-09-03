@@ -75,8 +75,9 @@ Future<int> kioskqueryCustomer(Customer customer) async {
 } 
 
 
-//kiosk id,주문번호  확인
-//Ordered table query
+
+
+//home
 Future<List<Map<String,dynamic>>> kioskqueryOrder(Kiosk kiosk)async{
   final Database db = await initializeDB();
   final List<Map<String ,Object?>> queryResult = await db.rawQuery(
@@ -84,11 +85,11 @@ Future<List<Map<String,dynamic>>> kioskqueryOrder(Kiosk kiosk)async{
     select o.seq ,o.shoes_seq, o.quantity, s.shoesname, s.image, o.order_seq
     from ordered as o
     join shoes as s on o.shoes_seq = s.seq
-    where o.seq like ? and o.customer_id = ? and o.pickuptime is 'null'
-    ''', ['${kiosk.seq}%', kiosk.customer_id]
+    where o.seq like ? and o.customer_id = ? and 
+    o.pickuptime is 'null' and 
+    o.branch_branchcode = ? and o.canceltime is 'null' 
+    ''', ['${kiosk.seq}%', kiosk.customer_id, kiosk.branchcode]
   );
-    // print(queryResult);
-    // print(queryResult.first['image']);
     
     return queryResult.isEmpty ? [] : queryResult;
 }
@@ -101,11 +102,12 @@ Future<int> updateOrder(Kiosk kiosk) async {
     """
       UPDATE ordered
       SET pickuptime = ?
-      WHERE seq like ? and customer_id = ? 
+      WHERE seq like ? and customer_id = ? and branch_branchcode = ?
     """,
     [ kiosk.pickuptime.toString(),
       "${kiosk.seq}%",
-      kiosk.customer_id
+      kiosk.customer_id,
+      kiosk.branchcode
     ],
 
   );

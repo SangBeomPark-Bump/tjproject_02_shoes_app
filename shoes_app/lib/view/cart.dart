@@ -64,7 +64,7 @@ class _CartState extends State<CartPage> {
 //dropdown branch
 readBranch()async{
   item = await carthandler.queryBranch();
-  dropdownValue = item.first;
+  dropdownValue = item[0];
   setState(() {
   });
 }
@@ -73,7 +73,9 @@ readBranch()async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('장바구니'),
       ),
       body: Column(
@@ -103,22 +105,6 @@ readBranch()async{
                     });
                   },
                   )
-                // DropdownButton<String>( //지점 드랍다운 버튼
-                //   dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                //   value: dropdownValue,
-                //   icon: const Icon(Icons.keyboard_arrow_down),
-                //   items: item.map((String item) {
-                //     return DropdownMenuItem<String>(
-                //       value: item,
-                //       child: Text(item),
-                //     );
-                //   }).toList(),
-                //   onChanged: (value) {
-                //     setState(() {
-                //       dropdownValue = value!;
-                //     });
-                //   },
-                // ),
               ],
             ),
           ),
@@ -242,7 +228,11 @@ readBranch()async{
             // 구매 처리 로직
             cartInsertOrder();
             deleteCart();
+            readcartBox(); //화면 다시 그리기
             Get.back(); // 다이얼로그 닫기
+            setState(() {
+              
+            });
           },
           child: const Text('예'),
         ),

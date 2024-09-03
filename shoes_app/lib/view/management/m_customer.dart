@@ -195,8 +195,7 @@ class _MCustomerState extends State<MCustomer> {
           FutureBuilder(
             future: _calculateGender(customerId),
             builder: (context, snapshot) {
-
-            return snapshot.hasData? Text(snapshot.data!) : Text('') ;
+            return snapshot.hasData? Text(snapshot.data!) : const Text('') ;
             }
           )
         ),
@@ -204,7 +203,7 @@ class _MCustomerState extends State<MCustomer> {
           FutureBuilder(
             future : _calculateAge(customerId),
             builder: (context,snapshot) {
-              return snapshot.hasData ? Text(snapshot.data!) : Text('');
+              return snapshot.hasData ? Text(snapshot.data!) : const  Text('');
             }
           )
         ),
@@ -229,7 +228,7 @@ class _MCustomerState extends State<MCustomer> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Text('Loading...');
               } else if (snapshot.hasError || !snapshot.hasData) {
-                return Text('0 원');  // 오류 발생 시 기본값을 0원으로 설정
+                return const Text('0 원');  // 오류 발생 시 기본값을 0원으로 설정
               } else {
                 return Text('${snapshot.data!.toStringAsFixed(0)} 원');
               }
@@ -258,7 +257,6 @@ class _MCustomerState extends State<MCustomer> {
           FutureBuilder(
           future : _calculateAge(customerId),
           builder: (context,snapshot) {
-
             return snapshot.hasData? Text(snapshot.data!) : const Text('') ;
           }
         )),
