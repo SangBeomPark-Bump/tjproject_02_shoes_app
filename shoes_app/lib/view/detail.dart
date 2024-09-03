@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/view/cart.dart';
+import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 
 class Detail extends StatefulWidget {
@@ -64,12 +65,24 @@ class _DetailState extends State<Detail> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.shopping_cart),
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              onPressed: () {
+                Get.back();
+                Get.off(()=>HomePage(sIdx: 1,));
+              },
+              icon: const Icon(Icons.shopping_cart)
+            ),
           )
         ],
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new),
+        onPressed: () {
+          Get.off(HomePage());
+        },
+      ),
       ),
       body: SingleChildScrollView(
         child: Center(

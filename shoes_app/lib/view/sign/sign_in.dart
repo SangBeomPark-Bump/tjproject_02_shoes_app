@@ -138,10 +138,8 @@ class _SignInPageState extends State<SignInPage> {
                             foregroundColor: Colors.blue,
                           ),
                           onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const SignUpPage()),
-                            );
+                            Get.off(() => const SignUpPage());
+                            
                           },
                           child: const Text('Sign Up'),
                         ),
@@ -150,12 +148,9 @@ class _SignInPageState extends State<SignInPage> {
                     const SizedBox(height: 20), 
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Test()),
-                        );
+                        Get.to(() => const Test());
                       },
-                      child: const Text('Test'),
+                      child: const Text('데이터 생성'),
                     ),
                   ],
                 ),
@@ -179,9 +174,7 @@ class _SignInPageState extends State<SignInPage> {
               TextButton(
                 child: const Text('확인'),
                 onPressed: () {
-                  Get.back();
-                  Get.back();
-                  Get.to(() => const MHome());
+                  Get.off(() =>const MHome());
                 },
               ),
             ],
@@ -210,11 +203,8 @@ class _SignInPageState extends State<SignInPage> {
             TextButton(
               child: const Text('확인'),
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
+                Get.back();
+                Get.off(() => HomePage());
               },
             ),
           ],

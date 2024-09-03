@@ -234,7 +234,7 @@ Widget _buildGridView(List shoes) {
       final shoe = shoes[index];
       return GestureDetector(
         onTap: () {
-          Get.to(() => Detail(), arguments: [
+          Get.off(() => const Detail(), arguments: [
             shoe.seq,
             shoe.shoesname,
             shoe.price,

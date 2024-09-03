@@ -66,21 +66,23 @@ class _MProductState extends State<MProduct> {
                       return ChartData(DateFormat.yMMM().format(date), value);
                     }).toList();
                       
-                    return SfCartesianChart(
-                      primaryXAxis: CategoryAxis(
-                        title: AxisTitle(text: 'Month'), // 가로축 제목 설정
-                      ),
-                      primaryYAxis: NumericAxis(
-                        title: AxisTitle(text: 'Total Sales'), // 세로축 제목 설정
-                      ),
-                      series: <CartesianSeries>[
-                        ColumnSeries<ChartData, String>(
-                          dataSource: chartData,
-                          xValueMapper: (ChartData data, _) => data.month,
-                          yValueMapper: (ChartData data, _) => data.value,
-                          color: Colors.blue, // 바 차트 색상 설정
+                    return Expanded(
+                      child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(
+                          title: AxisTitle(text: 'Month'), // 가로축 제목 설정
                         ),
-                      ],
+                        primaryYAxis: NumericAxis(
+                          title: AxisTitle(text: 'Total Sales'), // 세로축 제목 설정
+                        ),
+                        series: <CartesianSeries>[
+                          ColumnSeries<ChartData, String>(
+                            dataSource: chartData,
+                            xValueMapper: (ChartData data, _) => data.month,
+                            yValueMapper: (ChartData data, _) => data.value,
+                            color: Colors.blue, // 바 차트 색상 설정
+                          ),
+                        ],
+                      ),
                     );
                   }
                 },

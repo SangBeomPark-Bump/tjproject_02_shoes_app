@@ -4,19 +4,39 @@ import 'cart.dart';
 import 'orders.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+
+  int? sIdx = 0;
+
+
+
+
+  HomePage({
+    super.key,
+    this.sIdx = 0
+    });
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+  
   static const List<Widget> _widgetOptions = <Widget>[
     AppHome(),
     CartPage(),
     Orders(),
   ];
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.sIdx);
+    _selectedIndex = widget.sIdx!;
+  }
+
 
   void _onItemTapped(int index) {
     setState(() {
