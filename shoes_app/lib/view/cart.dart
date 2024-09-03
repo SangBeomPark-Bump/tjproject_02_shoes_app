@@ -1,15 +1,12 @@
 
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/model/order.dart';
-import 'package:shoes_app/view/detail.dart';
-import 'package:shoes_app/view/home.dart';
-import 'package:shoes_app/view/orders.dart';
 import 'package:shoes_app/view/sign/sign_in.dart';
 import 'package:shoes_app/vm/database_cart_handler.dart';
 

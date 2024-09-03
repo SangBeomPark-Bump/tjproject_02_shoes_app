@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shoes_app/view/sign/sign_in.dart';
-import 'package:shoes_app/vm/database_handler.dart';
+
 import 'package:shoes_app/vm/database_handler_order.dart';
 import 'detail.dart';
 
@@ -92,7 +92,7 @@ class _AppHomeState extends State<AppHome> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data!.isEmpty) {
-                      return Center(
+                      return const Center(
                         child: Column(
                           children: [
                             SizedBox(
@@ -140,7 +140,7 @@ class _AppHomeState extends State<AppHome> {
                     if (snapshot.hasData) {
                       return _buildGridView(snapshot.data!);
                     } else {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
@@ -272,18 +272,18 @@ Widget _buildGridView(List shoes) {
                     children: [
                       Text(
                         shoe.brand,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         shoe.shoesname,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text("${shoe.price}원",
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.red, fontWeight: FontWeight.bold)),
-                      Text("SIZE ${shoe.size}", style: TextStyle(fontSize: 11)),
+                      Text("SIZE ${shoe.size}", style: const TextStyle(fontSize: 11)),
                     ],
                   ),
                 ),

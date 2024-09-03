@@ -1,5 +1,4 @@
 import 'package:path/path.dart';
-import 'package:shoes_app/model/branch.dart';
 import 'package:shoes_app/model/order.dart';
 import 'package:sqflite/sqflite.dart';
 

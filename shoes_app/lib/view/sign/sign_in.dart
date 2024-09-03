@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/view/home.dart';
+import 'package:shoes_app/view/kiosk/k_login.dart';
 import 'package:shoes_app/view/management/m_home.dart';
 import 'package:shoes_app/view/sign/sign_up.dart';
-import 'package:shoes_app/view/test.dart';
 import 'package:shoes_app/vm/database_sign_up_handler.dart';
 
 class SignInPage extends StatefulWidget {
@@ -148,9 +148,9 @@ class _SignInPageState extends State<SignInPage> {
                     const SizedBox(height: 20), 
                     ElevatedButton(
                       onPressed: () {
-                        Get.to(() => const Test());
+                        Get.to(() => const KLogin());
                       },
-                      child: const Text('데이터 생성'),
+                      child: const Text('키오스크'),
                     ),
                   ],
                 ),

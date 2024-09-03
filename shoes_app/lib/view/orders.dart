@@ -1,10 +1,10 @@
-import 'dart:ffi';
+
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:shoes_app/model/order_list.dart';
+
 import 'package:shoes_app/view/sign/sign_in.dart';
 import 'package:shoes_app/vm/database_handler_order.dart';
 
@@ -35,7 +35,7 @@ class _OrdersState extends State<Orders> {
     initStorage();
     availableMonths = [];
     functionAvailable();
-    print(availableMonths);
+
   }
 
   initStorage() {
@@ -47,7 +47,7 @@ class _OrdersState extends State<Orders> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('구매 내역'),
+        title: const Text('구매 내역'),
         leading: IconButton(
           icon: const Icon(Icons.exit_to_app),
           onPressed: () {
@@ -65,19 +65,19 @@ class _OrdersState extends State<Orders> {
                   Padding(
                     padding: const EdgeInsets.only(left: 80, right: 80),
                     child: DropdownButtonFormField(
-                      iconEnabledColor: Color.fromARGB(255, 0, 15, 46),
+                      iconEnabledColor: const Color.fromARGB(255, 0, 15, 46),
                       borderRadius:
                           BorderRadius.circular(20), // dropDown border radius
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(15)),
-                        prefixIcon: Icon(Icons.format_list_bulleted),
-                        prefixIconColor: Color.fromARGB(255, 0, 15, 46),
+                        prefixIcon: const Icon(Icons.format_list_bulleted),
+                        prefixIconColor: const Color.fromARGB(255, 0, 15, 46),
                         filled: true,
-                        fillColor: Color.fromARGB(255, 209, 234, 240),
+                        fillColor: const Color.fromARGB(255, 209, 234, 240),
                       ),
-                      dropdownColor: Color.fromARGB(255, 209, 234, 240),
+                      dropdownColor: const Color.fromARGB(255, 209, 234, 240),
                       value: selectedMonth,
                       items: availableMonths.map(
                         (String item) {
@@ -85,7 +85,7 @@ class _OrdersState extends State<Orders> {
                             value: item,
                             child: Text(
                               "  $item",
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                           );
                         },
@@ -103,11 +103,10 @@ class _OrdersState extends State<Orders> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(
+                          return const Center(
                             child: CircularProgressIndicator(),
                           );
                         } else if (snapshot.hasError) {
-                          print(snapshot.error);
                           return Center(
                             child: Text('에러 발생: ${snapshot.error}'),
                           );
@@ -118,19 +117,11 @@ class _OrdersState extends State<Orders> {
                               final ordered = snapshot.data![index];
                               return Column(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        /*boxShadow: [
-                                          BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.7),
-                                              offset: Offset(0, 3),
-                                              blurRadius: 5.0,
-                                              spreadRadius: 0.0)
-                                        ],*/
+                                    decoration: const BoxDecoration(
                                         color:
                                             Color.fromARGB(255, 240, 248, 255)),
                                     child: Column(
@@ -152,8 +143,8 @@ class _OrdersState extends State<Orders> {
                                               ordered.image,
                                               width: 120,
                                             ),
-                                            SizedBox(width: 20),
-                                            Container(
+                                            const SizedBox(width: 20),
+                                            SizedBox(
                                               width: 170,
                                               child: Column(
                                                 mainAxisAlignment:
@@ -166,7 +157,7 @@ class _OrdersState extends State<Orders> {
                                                             'yyyy-MM-dd HH:mm:ss')
                                                         .format(DateTime.parse(
                                                             "${ordered.paymenttime}")),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.normal),
@@ -192,29 +183,29 @@ class _OrdersState extends State<Orders> {
                                                       color: ordered
                                                                   .canceltime !=
                                                               null
-                                                          ? Color.fromARGB(
+                                                          ? const Color.fromARGB(
                                                               255, 207, 45, 34)
-                                                          : Color.fromARGB(
+                                                          :const  Color.fromARGB(
                                                               255, 0, 153, 0),
                                                     ),
                                                   ),
                                                   Text(
                                                     "수령장소: ${ordered.branchName}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.normal),
                                                   ),
                                                   Text(
                                                     ordered.shoesName,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
                                                   Text(
                                                     '구매가격: ${ordered.totalPrice}원',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -222,7 +213,7 @@ class _OrdersState extends State<Orders> {
                                                   ),
                                                   Text(
                                                     '구매수량: ${ordered.quantity}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -278,7 +269,7 @@ class _OrdersState extends State<Orders> {
                                                                       207,
                                                                       45,
                                                                       34)
-                                                                  : Color
+                                                                  : const Color
                                                                       .fromARGB(
                                                                           255,
                                                                           0,
@@ -301,7 +292,7 @@ class _OrdersState extends State<Orders> {
                             },
                           );
                         } else {
-                          return Center(
+                          return const Center(
                             child: Text('데이터가 없습니다'),
                           );
                         }
@@ -356,7 +347,6 @@ void _showLogoutConfirmationDialog(BuildContext context) {
 
   Future<void> functionAvailable() async {
     availableMonths = await handler.loadAvailableMonth();
-    print(availableMonths);
     if (monthInitial && availableMonths.isNotEmpty) {
       monthInitial = false;
       selectedMonth = availableMonths[availableMonths.length - 1];

@@ -1,15 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/model/kiosk.dart';
-import 'package:shoes_app/model/order.dart';
-import 'package:shoes_app/view/orders.dart';
-import 'package:shoes_app/vm/database_handler_management.dart';
 import 'package:shoes_app/vm/database_kiosk_handler.dart';
 
 class KHome extends StatefulWidget {
@@ -35,7 +29,7 @@ class _KHomeState extends State<KHome> {
     box.read('kioskID');
     myshoes =[];
     orderNum = "";
-    branchcode =3;
+    branchcode =1;
   }
   @override
   Widget build(BuildContext context) {
@@ -63,24 +57,21 @@ class _KHomeState extends State<KHome> {
             child: Center(
                 child: Column(
               children: [
-                          Padding(
-                  padding: const EdgeInsets.only(top: 130,right: 200, left: 200),
-                  child: TextField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
-                    ],
-                    controller: orderSeqController,
-                    decoration: const InputDecoration(
-                      labelStyle: TextStyle(fontSize: 25),
-                      labelText: "주문번호",
-                      ), 
-                    maxLength: 15,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 30,
-                    ),
-                  ),
-                ),
+                          TextField(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
+                            ],
+                            controller: orderSeqController,
+                            decoration: const InputDecoration(
+                              labelStyle: TextStyle(fontSize: 25),
+                              labelText: "주문번호",
+                              ), 
+                            maxLength: 15,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 30,
+                            ),
+                          ),
                 Padding(
                   padding: const  EdgeInsets.only(top: 20, bottom: 10),
                   child: ElevatedButton(
@@ -185,8 +176,6 @@ class _KHomeState extends State<KHome> {
                                         ),
                                     ),
                                   ),
-                                ],
-                              ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ElevatedButton(
@@ -200,6 +189,9 @@ class _KHomeState extends State<KHome> {
                                     child: const Text('수령하기'),
                                     ),
                               ),
+                                ],
+                              ),
+
                             ],
                               ),
                             ),

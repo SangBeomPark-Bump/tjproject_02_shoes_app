@@ -4,11 +4,13 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart'; 
 
 class MProduct extends StatefulWidget {
+
+  const MProduct({super.key});
   @override
-  _MProductState createState() => _MProductState();
+  MProductState createState() => MProductState();
 }
 
-class _MProductState extends State<MProduct> {
+class MProductState extends State<MProduct> {
   late Future<List<String>> keysFutre;
   Future<List<List<dynamic>>>? dataFuture;
   late DatabaseHandler_Product dbHandler;
@@ -29,7 +31,7 @@ class _MProductState extends State<MProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Monthly Sales Data'),
+        title: const Text('Monthly Sales Data'),
       ),
       body: FutureBuilder(
         future: keysFutre,
@@ -53,11 +55,11 @@ class _MProductState extends State<MProduct> {
                 future: dbHandler.queryTotalPriceByMonth(keys.data![keyidx]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Text('No data available');
+                    return const Text('No data available');
                   } else {
                     final chartData = snapshot.data!.map((data) {
                       DateTime date = data[0] as DateTime;
@@ -67,11 +69,11 @@ class _MProductState extends State<MProduct> {
                       
                     return Expanded(
                       child: SfCartesianChart(
-                        primaryXAxis: CategoryAxis(
+                        primaryXAxis: const CategoryAxis(
                           title: AxisTitle(text: 'Month'), // 가로축 제목 설정
                         ),
-                        primaryYAxis: NumericAxis(
-                          title: AxisTitle(text: 'Total Sales'), // 세로축 제목 설정
+                        primaryYAxis: const NumericAxis(
+                          title:  AxisTitle(text: 'Total Sales'), // 세로축 제목 설정
                         ),
                         series: <CartesianSeries>[
                           ColumnSeries<ChartData, String>(

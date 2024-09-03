@@ -1,9 +1,7 @@
 import 'package:path/path.dart';
 import 'package:shoes_app/model/kiosk.dart';
-import 'package:shoes_app/model/order.dart';
 import 'package:shoes_app/vm/database_handler_management.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 class DatabaseKioskHandler{
 

@@ -6,13 +6,15 @@ import 'package:path/path.dart';
 import 'package:intl/intl.dart'; // 날짜 형식을 다루기 위해 추가
 
 class MDate extends StatefulWidget {
+
+  const MDate({super.key});
   @override
   MDateState createState() => MDateState();
 }
 
 class MDateState extends State<MDate> {
   late Database _database;
-  List<_SalesData> salesData = [];
+  List<SalesData> salesData = [];
   bool isLoading = true;
 
   String selectedMonth = DateFormat('MM').format(DateTime.now());
@@ -33,18 +35,18 @@ class MDateState extends State<MDate> {
 
   Future<void> _loadSalesData() async {
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
-        SELECT strftime('%Y-%m-%d', paymenttime) as date, 
-              strftime('%m', paymenttime) as month,
-              SUM(quantity) as total_sales
-        FROM ordered
-        WHERE strftime('%m', paymenttime) = ?
+        SELECT strftime('%Y-%m-%d', o.paymenttime) as date, 
+              strftime('%m', o.paymenttime) as month,
+              sum(o.quantity * s.price) as total_sales
+        FROM ordered o, shoes s
+        WHERE strftime('%m', paymenttime) = ? and o.shoes_seq = s.seq and o.canceltime = 'null'
         GROUP BY date
         ORDER BY date ASC
       ''', [selectedMonth]);
 
       setState(() {
         salesData = rawData.map((data) {
-          return _SalesData(
+          return SalesData(
             data['date'].toString(),
             (data['total_sales'] as num).toDouble(),
             int.parse(data['month'].toString()), // 월을 정수로 변환하여 저장
@@ -123,18 +125,18 @@ class MDateState extends State<MDate> {
           ),
           Expanded(
             child: isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    title: ChartTitle(text: '월별 매출 데이터'),
-                    legend: Legend(isVisible: true),
+                    primaryXAxis: const CategoryAxis(),
+                    title: const ChartTitle(text: '월별 매출 데이터'),
+                    legend: const Legend(isVisible: true),
                     tooltipBehavior: TooltipBehavior(enable: true),
                     series: <CartesianSeries>[
-                      ColumnSeries<_SalesData, String>(
+                      ColumnSeries<SalesData, String>(
                         dataSource: salesData,
-                        xValueMapper: (_SalesData sales, _) => sales.date,
-                        yValueMapper: (_SalesData sales, _) => sales.totalSales,
-                        pointColorMapper: (_SalesData sales, _) => _getColorForMonth(sales.month),
+                        xValueMapper: (SalesData sales, _) => sales.date,
+                        yValueMapper: (SalesData sales, _) => sales.totalSales,
+                        pointColorMapper: (SalesData sales, _) => _getColorForMonth(sales.month),
                         name: '매출',
                         dataLabelSettings: const DataLabelSettings(isVisible: true),
                       )
@@ -180,8 +182,8 @@ class MDateState extends State<MDate> {
 }
 
 // 매출 데이터 모델 클래스
-class _SalesData {
-  _SalesData(this.date, this.totalSales, this.month);
+class SalesData {
+  SalesData(this.date, this.totalSales, this.month);
 
   final String date;
   final double totalSales;

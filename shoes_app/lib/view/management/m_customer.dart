@@ -282,7 +282,6 @@ class _MCustomerState extends State<MCustomer> {
     final Map<String, int> productCounts = {};
 
     for (var order in customerOrders) {
-      try {
         String? productName = await handler.getShoeName(order.shoes_seq);
         if (productName != null) {
           if (productCounts.containsKey(productName)) {
@@ -291,9 +290,6 @@ class _MCustomerState extends State<MCustomer> {
             productCounts[productName] = order.quantity;
           }
         }
-      } catch (e) {
-        print("Error getting product name: $e");
-      }
     }
 
     return productCounts.entries
@@ -304,7 +300,6 @@ class _MCustomerState extends State<MCustomer> {
 Future<double> _calculateTotalAmount(List<Order> customerOrders) async {
     double totalAmount = 0.0;
     for (var order in customerOrders) {
-        try {
             final dynamic price = await handler.getShoePrice(order.shoes_seq);  // 가격을 DB에서 가져옴
 
             // 타입에 따라 처리
@@ -312,13 +307,7 @@ Future<double> _calculateTotalAmount(List<Order> customerOrders) async {
                 totalAmount += order.quantity * price.toDouble(); // int 타입을 double로 변환
             } else if (price is double) {
                 totalAmount += order.quantity * price; // double 타입은 그대로 사용
-            } else {
-                print("Unexpected price type: $price");
             }
-        } catch (e) {
-            print("Error calculating total amount: $e");
-            totalAmount += 0;  // 오류 발생 시 합산에 0을 추가
-        }
     }
     return totalAmount;
 }

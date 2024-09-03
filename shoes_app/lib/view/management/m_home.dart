@@ -10,17 +10,17 @@ class MHome extends StatefulWidget {
   const MHome({super.key});
 
   @override
-  _MHomeState createState() => _MHomeState();
+  MHomeState createState() => MHomeState();
 }
 
-class _MHomeState extends State<MHome> {
+class MHomeState extends State<MHome> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    MBranch(),   // MBranch는 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
-    MDate(),     // MDate도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
-    MCustomer(), // MCustomer도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
-    MProduct()   // MProduct도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    const MBranch(),   // MBranch는 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    const MDate(),     // MDate도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    const MCustomer(), // MCustomer도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
+    const MProduct()   // MProduct도 정확한 StatefulWidget 또는 StatelessWidget이어야 합니다.
   ];
 
   void _onItemTapped(int index) {

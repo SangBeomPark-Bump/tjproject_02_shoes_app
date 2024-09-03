@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shoes_app/view/kiosk/k_login.dart';
-import 'package:shoes_app/view/management/m_home.dart';
-import 'view/home.dart';
-import 'view/sign/sign_in.dart';
-import 'view/sign/sign_up.dart';
-import 'view/test.dart';
 import 'view/sign/sign_in.dart';
 
 void main() {
@@ -27,5 +21,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-
+// 7e80af50c7bss1e
+// 7e80af5351fqw53
 }

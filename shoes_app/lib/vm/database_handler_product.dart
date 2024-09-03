@@ -90,7 +90,7 @@ class DatabaseHandler_Product{
     List<List<dynamic>> result = queryResult.map((row) {
       // orderMonth를 DateTime으로 변환
       String orderMonth = row['orderMonth'] as String;
-      DateTime dateTime = DateTime.parse(orderMonth + "-01"); // 월을 1일로 설정
+      DateTime dateTime = DateTime.parse("$orderMonth-01"); // 월을 1일로 설정
 
       // totalPriceQuantity를 int로 변환
       int totalPriceQuantity = row['totalPriceQuantity'] as int;
@@ -137,7 +137,7 @@ class DatabaseHandler_Product{
     List<List<dynamic>> result = queryResult.map((row) {
       // orderMonth를 DateTime으로 변환
       String orderMonth = row['orderMonth'] as String;
-      DateTime dateTime = DateTime.parse(orderMonth+'-00'); // 월을 1일로 설정
+      DateTime dateTime = DateTime.parse('$orderMonth-00'); // 월을 1일로 설정
 
       // totalPriceQuantity를 int로 변환
       int totalPriceQuantity = row['totalPriceQuantity'] as int;
@@ -168,7 +168,6 @@ Future<List<String>> queryProductkeys() async {
         group by brands
     """,
   );
-  print(queryResult);
   return queryResult.map((brand) => brand['brands'] as String ).toList();
   //return queryResult.map((Dae) => Customer.fromMap(e)).toList();
 }

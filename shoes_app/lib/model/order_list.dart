@@ -27,7 +27,7 @@ class OrderList {
   });
 
   OrderList.fromMap(Map<String, dynamic> res)
-      : image = res['image'] == null ? Uint8List(1) : res['image'],
+      : image = res['image'] ?? Uint8List(1),
         totalPrice = (res['totalPrice'] ?? 1),
         shoesName = res['shoesname'] ?? "",
         seq = res['seq'] ?? "",

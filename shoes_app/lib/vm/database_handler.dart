@@ -159,9 +159,7 @@ Future<List<Order>> queryOrder() async {
   final List<Map<String, Object?>> queryResult = await db.rawQuery(
     'SELECT * FROM ordered',
   );
-  print(queryResult[21]['pickuptime']);
   List<Order> resultorder = queryResult.map((e) => Order.fromMap(e)).toList();
-  print(resultorder[21].pickuptime);
   return resultorder;
 }
 
@@ -267,14 +265,13 @@ Future<int> updateShoe(Shoes shoe) async {
 
 removeOrdered()async{
   final Database db = await initializeDB();
-    final int order_queryResult = await db.rawDelete(
+    await db.rawDelete(
     """
         DELETE 
         FROM ordered
     """
 
   );
-  print(order_queryResult);
 }
 
 

@@ -16,10 +16,10 @@ class HomePage extends StatefulWidget {
     });
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   late int _selectedIndex;
   
   static const List<Widget> _widgetOptions = <Widget>[
@@ -33,7 +33,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    print(widget.sIdx);
     _selectedIndex = widget.sIdx!;
   }
 

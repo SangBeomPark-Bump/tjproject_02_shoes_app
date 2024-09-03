@@ -70,7 +70,7 @@ class _MBranchState extends State<MBranch> {
                             children: [
                               ////////////////// 뒤로가는버튼
                               IconButton(
-                                icon: Icon(Icons.arrow_back),
+                                icon: const Icon(Icons.arrow_back),
                                 onPressed: () =>
                                     _onPreviousMonth(availableMonths.data!),
                                 color: availableMonths.data!
@@ -230,7 +230,6 @@ class _MBranchState extends State<MBranch> {
 
 // 왼쪽화살표 누르면 작동하는 함수
   void _onPreviousMonth(availableMonths) {
-    print(availableMonths);
     int currentMonthIndex = availableMonths.indexOf(selectedMonth);
     if (currentMonthIndex > 0) {
       // print(availableMonths);

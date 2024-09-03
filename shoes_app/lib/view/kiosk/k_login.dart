@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/view/kiosk/k_home.dart';
-import 'package:shoes_app/vm/database_handler.dart';
 import 'package:shoes_app/vm/database_handler_management.dart';
 import 'package:shoes_app/vm/database_kiosk_handler.dart';
 
@@ -43,75 +42,72 @@ class _KLoginState extends State<KLogin> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(200),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '더조은 신발가게 강남점',
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    '더조은 신발가게 강남점',
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold
+                  ),
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  ),
+                  const Text("LOGIN",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30
+                  ),
+                  ),
+                  const SizedBox(height: 50),
+                  //idd
+                  TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
+                    ],
+                    controller: idController,
+                    decoration: const InputDecoration(
+                      hintText: "ID",
                     ),
+                  ),
+                  const SizedBox(height: 30),
+                  //password 입력
+                  TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
+                    ],
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      hintText: "Password"
                     ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                    const Text("LOGIN",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30
-                    ),
-                    ),
-                    const SizedBox(height: 50),
-                    //idd
-                    TextField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
-                      ],
-                      controller: idController,
-                      decoration: const InputDecoration(
-                        hintText: "ID",
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    //password 입력
-                    TextField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
-                      ],
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        hintText: "Password"
-                      ),
-                    ),
-                    const SizedBox(height: 50,),
-                    ElevatedButton(
-                      onPressed: () async{
-                        Customer customer = Customer(
-                          id: idController.text.trim(),
-                          password:  passwordController.text.trim()
-                        );
-                          int result = await kioskHandler.kioskqueryCustomer(customer);
-                            if(idController.text.trim().isEmpty || 
-                              passwordController.text.trim().isEmpty){
-                                errorSnackBar();
-                            }else{
-                              if(result == 0){
-                                notCorrectDialog();
-                                }else{
-                                  loginDialog();
-                                }
-                            }
-                      }, 
-                    child: const Text('Sign In')
-                    )
-                    
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 50,),
+                  ElevatedButton(
+                    onPressed: () async{
+                      Customer customer = Customer(
+                        id: idController.text.trim(),
+                        password:  passwordController.text.trim()
+                      );
+                        int result = await kioskHandler.kioskqueryCustomer(customer);
+                          if(idController.text.trim().isEmpty || 
+                            passwordController.text.trim().isEmpty){
+                              errorSnackBar();
+                          }else{
+                            if(result == 0){
+                              notCorrectDialog();
+                              }else{
+                                loginDialog();
+                              }
+                          }
+                    }, 
+                  child: const Text('Sign In')
+                  )
+                  
+                ],
               ),
             ),
           ),

@@ -8,10 +8,10 @@ class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  SignUpPageState createState() => SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   int isIdDup = 0;
 
@@ -114,7 +114,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: _idController,
                       onChanged: (value) {
                         isIdDup = 1;
-                        print(isIdDup);
                       },
                       decoration: const InputDecoration(
                         labelText: '아이디',
@@ -137,7 +136,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ElevatedButton(
                     onPressed: () async{
                       isIdDup = await _handler.idCustomer(_idController.text);
-                      print(isIdDup);
                       // 아이디 중복 확인 로직을 추가할 수 있습니다.
                       ScaffoldMessenger.of(context).showSnackBar(
                         isIdDup != 0
@@ -211,7 +209,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   FilteringTextInputFormatter.digitsOnly,
                   TextInputFormatter.withFunction((oldValue, newValue) {
                     if (newValue.text.length > 6 && !newValue.text.contains('-')) {
-                      final text = newValue.text.substring(0, 6) + '-' + newValue.text.substring(6);
+                      final text = '${newValue.text.substring(0, 6)} - {newValue.text.substring(6)}';
                       return TextEditingValue(
                         text: text,
                         selection: TextSelection.collapsed(offset: text.length),
