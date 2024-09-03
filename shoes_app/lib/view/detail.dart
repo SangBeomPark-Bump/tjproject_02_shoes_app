@@ -96,33 +96,28 @@ class _DetailState extends State<Detail> {
                   child: Column(
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width-10,
-                        height: 270,
-                        child: Image.memory(image, width: 100)
+                          width: MediaQuery.of(context).size.width - 10,
+                          height: 270,
+                          child: Image.memory(image, width: 100)),
+                      //브랜드 값 가져옴
+                      Text(shoesname,
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
+                      //제품명 값 가져옴
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                        child: Text("${price.toString()}₩",
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red)),
                       ),
-                //브랜드 값 가져옴
-              Text(
-                shoesname,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              ),
-                //제품명 값 가져옴
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                child: Text(
-                  "${price.toString()}₩",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red)
-                ),
-              ),
                     ],
                   ),
                 ),
               ),
 
-
-                      //가격 값 가져옴
+              //가격 값 가져옴
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,9 +157,7 @@ class _DetailState extends State<Detail> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    width: 20
-                    ),
+                  const SizedBox(width: 20),
                   Column(
                     children: [
                       Container(
@@ -191,8 +184,7 @@ class _DetailState extends State<Detail> {
                                 });
                               },
                               icon: const Icon(Icons.remove,
-                                  color:
-                                      Color.fromARGB(255, 122, 163, 195)),
+                                  color: Color.fromARGB(255, 122, 163, 195)),
                             ),
                             Text("$quantity"),
                             IconButton(

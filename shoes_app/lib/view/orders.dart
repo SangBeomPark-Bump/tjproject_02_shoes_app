@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -40,7 +42,11 @@ class _OrdersState extends State<Orders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text('구매 내역'),
+      ),
+      backgroundColor: Colors.white,
       body: Center(
         child: availableMonths == []
             ? const CircularProgressIndicator()
@@ -48,29 +54,28 @@ class _OrdersState extends State<Orders> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 100, right: 100),
+                    padding: const EdgeInsets.only(left: 80, right: 80),
                     child: DropdownButtonFormField(
+                      iconEnabledColor: Color.fromARGB(255, 0, 15, 46),
+                      borderRadius:
+                          BorderRadius.circular(20), // dropDown border radius
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(15)),
+                        prefixIcon: Icon(Icons.format_list_bulleted),
+                        prefixIconColor: Color.fromARGB(255, 0, 15, 46),
                         filled: true,
-                        fillColor: Colors.grey[300],
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide:
-                              const BorderSide(color: Colors.black, width: 2),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide:
-                              const BorderSide(color: Colors.black, width: 1),
-                        ),
+                        fillColor: Color.fromARGB(255, 209, 234, 240),
                       ),
+                      dropdownColor: Color.fromARGB(255, 209, 234, 240),
                       value: selectedMonth,
                       items: availableMonths.map(
                         (String item) {
                           return DropdownMenuItem<String>(
                             value: item,
                             child: Text(
-                              "    $item",
+                              "  $item",
                               style: TextStyle(fontSize: 20),
                             ),
                           );
@@ -104,138 +109,180 @@ class _OrdersState extends State<Orders> {
                               final ordered = snapshot.data![index];
                               return Column(
                                 children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("주문번호: ${ordered.seq}"),
+                                  SizedBox(
+                                    height: 20,
                                   ),
                                   Container(
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                    decoration: BoxDecoration(
+                                        /*boxShadow: [
+                                          BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.7),
+                                              offset: Offset(0, 3),
+                                              blurRadius: 5.0,
+                                              spreadRadius: 0.0)
+                                        ],*/
+                                        color:
+                                            Color.fromARGB(255, 240, 248, 255)),
+                                    child: Column(
                                       children: [
-                                        Image.memory(ordered.image, width: 120),
-                                        SizedBox(width: 20),
-                                        Container(
-                                          width: 170,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                DateFormat(
-                                                        'yyyy-MM-dd HH:mm:ss')
-                                                    .format(DateTime.parse(
-                                                        "${ordered.paymenttime}")),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                              Text(
-                                                ordered.pickuptime != null
-                                                    ? DateFormat(
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20, bottom: 5, top: 5),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                                "주문번호: ${ordered.seq.substring(1, 15)}"),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.memory(
+                                              ordered.image,
+                                              width: 120,
+                                            ),
+                                            SizedBox(width: 20),
+                                            Container(
+                                              width: 170,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    DateFormat(
                                                             'yyyy-MM-dd HH:mm:ss')
-                                                        .format(
-                                                            ordered.pickuptime!)
-                                                    : (ordered.canceltime ==
-                                                            null
-                                                        ? ""
-                                                        : DateFormat(
-                                                                'yyyy-MM-dd HH:mm:ss')
-                                                            .format(DateTime.parse(
-                                                                "${ordered.canceltime}"))),
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  color:
-                                                      ordered.canceltime != null
-                                                          ? Colors.red
-                                                          : Colors.green,
-                                                ),
-                                              ),
-                                              Text(
-                                                "수령장소: ${ordered.branchName}",
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                              Text(
-                                                ordered.shoesName,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                '구매가격: ${ordered.totalPrice}원',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(
-                                                '구매수량: ${ordered.quantity}',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomRight,
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    if (ordered.pickuptime ==
-                                                            null &&
-                                                        ordered.canceltime ==
-                                                            null) {
-                                                      Get.defaultDialog(
-                                                          title: '구매취소',
-                                                          middleText:
-                                                              '구매를 취소하시겠습니까?',
-                                                          radius: 20,
-                                                          textCancel: '네',
-                                                          onCancel: () async {
-                                                            await handler.cancelShoe(
-                                                                DateTime.now()
-                                                                    .toString(),
-                                                                ordered.seq);
-                                                            setState(() {});
-                                                            Get.back();
-                                                          },
-                                                          textConfirm: '아니요',
-                                                          onConfirm: () =>
-                                                              Get.back());
-                                                    }
-                                                  },
-                                                  child: Text(
+                                                        .format(DateTime.parse(
+                                                            "${ordered.paymenttime}")),
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  ),
+                                                  Text(
                                                     ordered.pickuptime != null
-                                                        ? "수령완료"
-                                                        : (ordered.canceltime !=
+                                                        ? DateFormat(
+                                                                'yyyy-MM-dd HH:mm:ss')
+                                                            .format(ordered
+                                                                .pickuptime!)
+                                                        : (ordered.canceltime ==
                                                                 null
-                                                            ? "구매취소됨"
-                                                            : "구매취소"),
+                                                            ? ""
+                                                            : DateFormat(
+                                                                    'yyyy-MM-dd HH:mm:ss')
+                                                                .format(DateTime
+                                                                    .parse(
+                                                                        "${ordered.canceltime}"))),
                                                     style: TextStyle(
                                                       fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.normal,
                                                       color: ordered
-                                                                  .pickuptime ==
+                                                                  .canceltime !=
                                                               null
-                                                          ? const Color
-                                                              .fromARGB(
+                                                          ? Color.fromARGB(
                                                               255, 207, 45, 34)
                                                           : Color.fromARGB(
-                                                              255, 27, 168, 69),
+                                                              255, 0, 153, 0),
                                                     ),
                                                   ),
-                                                ),
+                                                  Text(
+                                                    "수령장소: ${ordered.branchName}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  ),
+                                                  Text(
+                                                    ordered.shoesName,
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    '구매가격: ${ordered.totalPrice}원',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '구매수량: ${ordered.quantity}',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.bottomRight,
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        if (ordered.pickuptime ==
+                                                                null &&
+                                                            ordered.canceltime ==
+                                                                null) {
+                                                          Get.defaultDialog(
+                                                              title: '구매취소',
+                                                              middleText:
+                                                                  '구매를 취소하시겠습니까?',
+                                                              radius: 20,
+                                                              textCancel: '네',
+                                                              onCancel:
+                                                                  () async {
+                                                                await handler.cancelShoe(
+                                                                    DateTime.now()
+                                                                        .toString(),
+                                                                    ordered
+                                                                        .seq);
+                                                                setState(() {});
+                                                                Get.back();
+                                                              },
+                                                              textConfirm:
+                                                                  '아니요',
+                                                              onConfirm: () =>
+                                                                  Get.back());
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        ordered.pickuptime !=
+                                                                null
+                                                            ? "수령완료"
+                                                            : (ordered.canceltime !=
+                                                                    null
+                                                                ? "구매취소됨"
+                                                                : "구매취소"),
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              ordered.pickuptime ==
+                                                                      null
+                                                                  ? const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      207,
+                                                                      45,
+                                                                      34)
+                                                                  : Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          153,
+                                                                          0),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
