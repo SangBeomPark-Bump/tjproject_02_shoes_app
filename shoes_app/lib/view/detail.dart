@@ -3,8 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:shoes_app/view/cart.dart';
-import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 
 class Detail extends StatefulWidget {
@@ -26,11 +24,11 @@ class _DetailState extends State<Detail> {
   int quantity = 0; //신발 수량 count
   final box = GetStorage();
   //-------장바구니-----------
-  late List<int> wishSeq;
-  late List<String> wishShoesname;
-  late List<int> wishPrice;
-  late List<Uint8List> wishImage;
-  late List<int> wishSize;
+  late List<int> wishSeq; 
+  late List<String> wishShoesname; 
+  late List<int> wishPrice; 
+  late List<Uint8List> wishImage; 
+  late List<int> wishSize; 
   late List<String> wishBrand;
   late List<int> wishQuantity;
 
@@ -38,7 +36,7 @@ class _DetailState extends State<Detail> {
   void initState() {
     super.initState();
     handler = DatabaseHandler();
-    seq = value[0] as int?;
+    seq = value[0] as int?; 
     shoesname = value[1] as String;
     price = value[2] as int;
     image = value[3] as Uint8List;
@@ -47,11 +45,11 @@ class _DetailState extends State<Detail> {
 
     //장바구니 담은 목록 가져오기
     readBox();
-  }
 
-  readBox() {
-    wishSeq = box.read<List<int>>('wishSeq') ?? [];
-    wishShoesname = box.read<List<String>>('wishShoesname') ?? [];
+  }
+  readBox(){
+        wishSeq = box.read<List<int>>('wishSeq') ?? []; 
+    wishShoesname = box.read<List<String>>('wishShoesname') ?? []; 
     wishPrice = box.read<List<int>>('wishPrice') ?? [];
     wishImage = box.read<List<Uint8List>>('wishImage') ?? [];
     wishSize = box.read<List<int>>('wishSize') ?? [];
@@ -65,24 +63,12 @@ class _DetailState extends State<Detail> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () {
-                Get.back();
-                Get.off(()=>HomePage(sIdx: 1,));
-              },
-              icon: const Icon(Icons.shopping_cart)
-            ),
+            padding: EdgeInsets.all(8.0),
+            child: Icon(Icons.shopping_cart),
           )
         ],
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new),
-        onPressed: () {
-          Get.off(HomePage());
-        },
-      ),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -96,28 +82,33 @@ class _DetailState extends State<Detail> {
                   child: Column(
                     children: [
                       SizedBox(
-                          width: MediaQuery.of(context).size.width - 10,
-                          height: 270,
-                          child: Image.memory(image, width: 100)),
-                      //브랜드 값 가져옴
-                      Text(shoesname,
-                          style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
-                      //제품명 값 가져옴
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-                        child: Text("${price.toString()}₩",
-                            style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red)),
+                        width: MediaQuery.of(context).size.width-10,
+                        height: 270,
+                        child: Image.memory(image, width: 100)
                       ),
+                //브랜드 값 가져옴
+              Text(
+                shoesname,
+                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+              ),
+                //제품명 값 가져옴
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                child: Text(
+                  "${price.toString()}₩",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red)
+                ),
+              ),
                     ],
                   ),
                 ),
               ),
 
-              //가격 값 가져옴
+
+                      //가격 값 가져옴
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +123,7 @@ class _DetailState extends State<Detail> {
                             color: Colors.grey.withOpacity(0.7),
                             blurRadius: 5.0,
                             spreadRadius: 0.0,
-                            offset: Offset(0, 5))
+                            offset: const Offset(0, 5))
                       ],
                       borderRadius: BorderRadius.circular(15),
                       color: const Color.fromARGB(255, 255, 255, 255),
@@ -157,7 +148,9 @@ class _DetailState extends State<Detail> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(
+                    width: 20
+                    ),
                   Column(
                     children: [
                       Container(
@@ -180,11 +173,12 @@ class _DetailState extends State<Detail> {
                             IconButton(
                               onPressed: () {
                                 setState(() {
-                                  if (quantity > 0) quantity -= 1;
+                                  if (quantity >=1) quantity -= 1;
                                 });
                               },
                               icon: const Icon(Icons.remove,
-                                  color: Color.fromARGB(255, 122, 163, 195)),
+                                  color:
+                                      Color.fromARGB(255, 122, 163, 195)),
                             ),
                             Text("$quantity"),
                             IconButton(
@@ -193,24 +187,26 @@ class _DetailState extends State<Detail> {
                                   quantity += 1;
                                 });
                               },
-                              icon: Icon(Icons.add, color: Colors.red),
+                              icon: const Icon(Icons.add, color: Colors.red),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 26),
+                      const SizedBox(height: 26),
                       ElevatedButton(
                         onPressed: () {
-                          if (quantity != 0) {
-                            addToCart();
-                            Get.back();
-                          } else {}
+                          if(quantity!=0){
+                          addToCart();
+                          Get.back();
+                          }else{
+                            nullDialog();
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           elevation: 5,
                           backgroundColor:
                               const Color.fromARGB(255, 215, 215, 215),
-                          fixedSize: Size(150, 40),
+                          fixedSize: const Size(150, 40),
                         ),
                         child: const Text('장바구니 담기',
                             style: TextStyle(color: Colors.black87)),
@@ -249,4 +245,20 @@ class _DetailState extends State<Detail> {
     box.write('wishBrand', wishBrand);
     box.write('wishQuantity', wishQuantity);
   }
+
+nullDialog(){
+  Get.defaultDialog(
+    title: "경고",
+    middleText: "수량을 입력하세요.",
+    backgroundColor: Theme.of(context).colorScheme.onError,
+    titleStyle: TextStyle(color: Theme.of(context).colorScheme.error),
+    actions: [
+      TextButton(
+        onPressed: () => Get.back(), 
+        child: Text('확인')
+        )
+    ]
+  );
+}
+
 }

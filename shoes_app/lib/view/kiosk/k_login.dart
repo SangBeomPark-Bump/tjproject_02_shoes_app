@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shoes_app/view/kiosk/k_home.dart';
@@ -67,14 +68,20 @@ class _KLoginState extends State<KLogin> {
                     const SizedBox(height: 50),
                     //idd
                     TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
+                      ],
                       controller: idController,
                       decoration: const InputDecoration(
-                        hintText: "ID"
+                        hintText: "ID",
                       ),
                     ),
                     const SizedBox(height: 30),
                     //password 입력
                     TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
+                      ],
                       controller: passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
@@ -132,7 +139,7 @@ notCorrectDialog(){
 //로그인 성공
 loginDialog(){
   Get.defaultDialog(
-    title: '로그인 성공',
+    title: "${idController.text.trim()}님 환영합니다.",
     middleText: '제품 수령 페이지로 이동합니다.',
     backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     barrierDismissible: false,

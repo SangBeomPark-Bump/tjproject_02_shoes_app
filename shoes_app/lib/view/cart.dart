@@ -31,8 +31,7 @@ class _CartState extends State<CartPage> {
   late List<int> wishSize; //장바구니 신발 사이즈
   late List<String> wishBrand; // 장바구니 신발 브랜드
   late List<int> wishQuantity; //장바구니 수량
-  late int wishOrderseq; //order_seq 
-  // final userbox = GetStorage();
+  late int wishOrderseq; //order_seq
   DatabaseCarthandler carthandler = DatabaseCarthandler(); //장바구니용 handler
 
 
@@ -90,7 +89,13 @@ readBranch()async{
                   child: Text('수령장소', style: TextStyle()),
                 ),
                   DropdownButton<String>(
-                    dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+                    dropdownColor: const Color.fromARGB(255, 226, 224, 224),
+                    borderRadius: BorderRadius.circular(10),
+                    elevation: 10,
+                    underline: Container(
+                      height: 2,
+                      color: Colors.redAccent,
+                    ),
                     value: dropdownValue,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     items: item.map((String item){
@@ -128,84 +133,110 @@ readBranch()async{
                       )
                   ]
                   ),
-                  child: Card(
-                    child: Row(
-                      children: [
-                        Image.memory(wishImage[index], width: 120), //신발 이미지
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  child: SizedBox(
+                    width: 800,
+                    height: 150,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        color: const Color.fromARGB(255, 251, 250, 250),
+                        shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(5),
+                        side: const BorderSide(width: 1),
+                        ),
+                        elevation: 2,
+                        child: Row(
                           children: [
-                            Text(wishShoesname[index], //신발 이름
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
+                            Image.memory(wishImage[index], width: 120), //신발 이미지
+                            SizedBox(
+                              width: 130,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(wishShoesname[index], //신발 이름
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20
+                                  ),
+                                  ),
+                                  Text("Size: ${wishSize[index]}"), //사이즈
+                                  Text("${wishPrice[index] * wishQuantity[index]}₩",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20
+                                  ),
+                                  ) //가격
+                                ],
+                              ),
                             ),
-                            ),
-                            Text("Size: ${wishSize[index]}"), //사이즈
-                            Text("${wishPrice[index] * wishQuantity[index]}₩",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
-                            ),
-                            ) //가격
+                                Column(
+                                  children: [
+                                    ElevatedButton( //신발 수량 -
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                                        iconColor: Colors.blue
+                                      ),
+                                      onPressed: () {
+                                        if(wishQuantity[index]>=2) {
+                                          wishQuantity[index]--;
+                                        }
+                                      setState(() {});
+                                    },
+                                    child: const Icon(Icons.remove)
+                                    ),
+                                    
+                                    Text("수량 : ${wishQuantity[index]}",
+                                    style: const TextStyle(
+                                      fontSize: 15
+                                    ),
+                                    ), //신발 수량
+                                    
+                                    ElevatedButton( //신발 수량 +
+                                    style: ElevatedButton.styleFrom(
+                                      iconColor: Colors.red,
+                                      backgroundColor:  const Color.fromARGB(255, 255, 255, 255),
+                                    ),
+                                      onPressed: () {
+                                        wishQuantity[index]++;
+                                        setState(() {});
+                                      },
+                                      child: const Icon(Icons.add)
+                                    ),
+                                  ],
+                                ),
+                                  
                           ],
                         ),
-                            Column(
-                              children: [
-                                ElevatedButton( //신발 수량 -
-                                  onPressed: () {
-                                  if(wishQuantity[index]>1){
-                                    wishQuantity[index]--;
-                                  }setState(() {});
-                                }, 
-                                child: const Icon(Icons.remove)
-                                ),
-                                
-                                Text("수량 : ${wishQuantity[index]}",
-                                style: const TextStyle(
-                                  fontSize: 15
-                                ),
-                                ), //신발 수량
-                                
-                                ElevatedButton( //신발 수량 +
-                                  onPressed: () {
-                                  if(wishQuantity[index]<=4){
-                                    wishQuantity[index]++;
-                                    setState(() {});
-                                  }
-                                },
-                                  child: const Icon(Icons.add)
-                                ),
-                              ],
-                            ),
-
-                      ],
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 30),
+                padding: const EdgeInsets.all(80),
                 child: 
                 ElevatedButton( //구매 버튼
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(200, 50),
+                  backgroundColor:const Color.fromARGB(255, 34, 193, 195),
+                ),
                   onPressed: () {
                     wishSeq.isEmpty ? 
                     erorrSnackBar() 
                     :purchaseDialog(); //구매 확인 다이얼로그
                   },
-                  child: const Text("구매"),
+                  child: const Text("구매",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                  ),
                 ),
-              ),
-              ElevatedButton( //취소 버튼
-                onPressed: () {
-                  
-                },
-                child: const Text('취소'),
               ),
             ],
           ),
@@ -231,7 +262,6 @@ readBranch()async{
             readcartBox(); //화면 다시 그리기
             Get.back(); // 다이얼로그 닫기
             setState(() {
-              
             });
           },
           child: const Text('예'),
@@ -285,6 +315,9 @@ deleteCart(){
         );
         orders.seqMaker();
         carthandler.insertOrder(orders);
+        setState(() {
+          
+        });
       
     }
   }
@@ -328,6 +361,9 @@ erorrSnackBar(){ //get package SnackBar
   colorText: Theme.of(context).colorScheme.onError
   );
 }
+
+
+
 
 
 

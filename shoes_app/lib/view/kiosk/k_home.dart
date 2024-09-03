@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/route_manager.dart';
@@ -64,6 +65,9 @@ class _KHomeState extends State<KHome> {
                           Padding(
                   padding: const EdgeInsets.only(top: 130,right: 200, left: 200),
                   child: TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9a-z]'))
+                    ],
                     controller: orderSeqController,
                     decoration: const InputDecoration(
                       labelStyle: TextStyle(fontSize: 25),
