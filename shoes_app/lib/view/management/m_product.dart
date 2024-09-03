@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoes_app/vm/database_handler_product.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
-// 데이터베이스 핸들러 클래스 import
+import 'package:intl/intl.dart'; 
 
 class MProduct extends StatefulWidget {
   @override

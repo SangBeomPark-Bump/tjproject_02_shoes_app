@@ -24,6 +24,7 @@ class _TestState extends State<Test> {
   void initState() {
     super.initState();
     handler = DatabaseHandler();
+    handler.initializeDB();
   }
 
   @override
@@ -72,16 +73,12 @@ class _TestState extends State<Test> {
     );
   }
 
+
+
+//Functions
   pressed() async {
+    handler.initializeDB();
     // 변환하고자 하는 이미지 경로
-    List imageList = [
-      await loadAssetAsBinary('images/newb_red.png'),
-      await loadAssetAsBinary('images/newb_white.png'),
-      await loadAssetAsBinary('images/nike_black.png'),
-      await loadAssetAsBinary('images/nike_red.png'),
-      await loadAssetAsBinary('images/prosp_black.png'),
-      await loadAssetAsBinary('images/prosp_red.png'),
-    ];
     List<Shoes> shoes = await MadeOrderPsb().shoes();
     for (Shoes shoe in shoes) {
       handler.insertShoe(shoe);
@@ -91,7 +88,6 @@ class _TestState extends State<Test> {
     print(result.length);
   }
 
-//Functions
   Future<Uint8List> loadAssetAsBinary(String assetPath) async {
     // assetPath는 Asset 이미지의 경로 예: 'assets/images/sample.png'
     ByteData byteData = await rootBundle.load(assetPath); // 이미지 로드
@@ -101,6 +97,8 @@ class _TestState extends State<Test> {
   }
 
   pressed2() async {
+    handler.initializeDB();
+
     List<Customer> customers = MadeOrderPsb().customer();
 
     for (Customer customer in customers) {
@@ -111,6 +109,7 @@ class _TestState extends State<Test> {
   }
 
   pressed3() async {
+    handler.initializeDB();
     List<Branch> branches = MadeOrderPsb().branch();
 
     for (Branch branches in branches) {
@@ -121,6 +120,7 @@ class _TestState extends State<Test> {
   }
 
   pressed4() async {
+    handler.initializeDB();
     List<Order> orders = MadeOrderPsb().order();
 
     for (Order order in orders) {

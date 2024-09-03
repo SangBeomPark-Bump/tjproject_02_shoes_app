@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 
 class Detail extends StatefulWidget {
@@ -197,7 +198,7 @@ class _DetailState extends State<Detail> {
                         onPressed: () {
                           if(quantity!=0){
                           addToCart();
-                          Get.back();
+                          Get.off(HomePage());
                           }else{
                             nullDialog();
                           }

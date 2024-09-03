@@ -6,6 +6,8 @@ import 'dart:math';
 
 import 'package:shoes_app/model/shoes.dart';
 
+
+// 데이터베이스에 집어넣기 위한 정보를 저장해두는 클래스//
 class MadeOrderPsb{
   Random random = Random();
 

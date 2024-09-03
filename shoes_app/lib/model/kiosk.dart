@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+//키오스크에서 가져올떄 쓸 모델
 class Kiosk{
 
 

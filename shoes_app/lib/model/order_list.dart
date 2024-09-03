@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+//구매목록 리스트를 위한 class
+
 class OrderList {
   //Properties
   Uint8List image;
