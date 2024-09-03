@@ -27,7 +27,9 @@ class _AppHomeState extends State<AppHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: _isSearching
               ? TextField(
                   controller: _searchController,
@@ -54,7 +56,7 @@ class _AppHomeState extends State<AppHome> {
             ),
           ],
           leading: IconButton(
-            icon: const Icon(Icons.home),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               _showLogoutConfirmationDialog(context);
             },
@@ -64,15 +66,8 @@ class _AppHomeState extends State<AppHome> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: Text(
-                  "Shoes",
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              const Padding(
+                padding: EdgeInsets.only(left: 15),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15),
@@ -86,6 +81,10 @@ class _AppHomeState extends State<AppHome> {
                   ),
                 ),
               ),
+              const Divider(
+                color: Colors.black,
+                thickness: 1.5,
+              ),
               FutureBuilder(
                 future: _isSearching
                     ? handler.queryShoesByQuery(_searchController.text)
@@ -94,7 +93,7 @@ class _AppHomeState extends State<AppHome> {
                   if (snapshot.hasData) {
                     return _buildGridView(snapshot.data!);
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
@@ -102,11 +101,18 @@ class _AppHomeState extends State<AppHome> {
               ),
               Visibility(
                 visible: !_isSearching,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15),
+                child: const Divider(
+                  color: Colors.black,
+                  thickness: 1.5,
+                ),
+              ),
+              Visibility(
+                visible: !_isSearching,
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 15),
                   child: Text(
                     "NewBalance",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -130,11 +136,18 @@ class _AppHomeState extends State<AppHome> {
               ),
               Visibility(
                 visible: !_isSearching,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15),
+                child: const Divider(
+                  color: Colors.black,
+                  thickness: 1.5,
+                ),
+              ),
+              Visibility(
+                visible: !_isSearching,
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 15),
                   child: Text(
                     "Prospecs",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -149,7 +162,7 @@ class _AppHomeState extends State<AppHome> {
                     if (snapshot.hasData) {
                       return _buildGridView(snapshot.data!);
                     } else {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
@@ -226,12 +239,16 @@ Widget _buildGridView(List shoes) {
               children: [
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Container(
-                    width: 170,
-                    height: 130,
-                    child: Image.memory(
-                      shoe.image,
-                      fit: BoxFit.contain,
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    child: SizedBox(
+                      width: 170,
+                      height: 130,
+                      child: Image.memory(
+                        shoe.image,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
