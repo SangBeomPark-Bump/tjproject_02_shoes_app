@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/services.dart';
 import 'package:shoes_app/model/branch.dart';
 import 'package:shoes_app/model/customer.dart';

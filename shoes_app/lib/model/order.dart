@@ -1,5 +1,7 @@
 import 'dart:math';
 
+// 구매와, seq를 만들기 위한 클래스
+
 class Order{
   
   
@@ -26,6 +28,8 @@ class Order{
     this.pickuptime,
   });
   
+  // 시간, 아이디, order_seq가 모두 들어감.
+
   seqMaker(){
     String seqYear = paymenttime.year.toRadixString(16).padLeft(3, '0');
     String seqDayMonth = (paymenttime.month+paymenttime.day * 932).toRadixString(16).padLeft(4, '0');

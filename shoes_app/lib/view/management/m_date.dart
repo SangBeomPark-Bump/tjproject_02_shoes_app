@@ -7,10 +7,10 @@ import 'package:intl/intl.dart'; // 날짜 형식을 다루기 위해 추가
 
 class MDate extends StatefulWidget {
   @override
-  _MDateState createState() => _MDateState();
+  MDateState createState() => MDateState();
 }
 
-class _MDateState extends State<MDate> {
+class MDateState extends State<MDate> {
   late Database _database;
   List<_SalesData> salesData = [];
   bool isLoading = true;
@@ -32,7 +32,6 @@ class _MDateState extends State<MDate> {
   }
 
   Future<void> _loadSalesData() async {
-    try {
       List<Map<String, dynamic>> rawData = await _database.rawQuery('''
         SELECT strftime('%Y-%m-%d', paymenttime) as date, 
               strftime('%m', paymenttime) as month,
@@ -54,12 +53,6 @@ class _MDateState extends State<MDate> {
         isLoading = false;
       });
 
-    } catch (e) {
-      print("Error loading sales data: $e");
-      setState(() {
-        isLoading = false;
-      });
-    }
   }
 
   void _onMonthChanged(String newMonth) {
