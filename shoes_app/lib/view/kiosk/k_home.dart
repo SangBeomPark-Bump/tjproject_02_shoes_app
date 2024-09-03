@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -22,7 +24,6 @@ class _KHomeState extends State<KHome> {
   final box = GetStorage();
   late List<Map<String,dynamic>> myshoes;
   late String orderNum;
-  late String shoesCount;
   late int branchcode;
 
   @override
@@ -32,127 +33,179 @@ class _KHomeState extends State<KHome> {
     box.read('kioskID');
     myshoes =[];
     orderNum = "";
-    shoesCount="";
     branchcode =1;
   }
-
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("제품 수령"),
-      ),
-      body: Center(
-          child: Column(
-        children: [
-                    Padding(
-            padding: const EdgeInsets.only(top: 150,right: 200, left: 200),
-            child: TextField(
-              controller: orderSeqController,
-              decoration: const InputDecoration(labelText: "주문번호"), 
-              maxLength: 15,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/shoes_kiosk.png'),
+          fit: BoxFit.fill
+          )
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: const Text("제품 수령",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 40
+            ),
             ),
           ),
-                    ElevatedButton( //조회버튼
-              onPressed: () async{
-                if(orderSeqController.text.trim().length == 15){ // 일치
-                  Kiosk kiosk = Kiosk(
-                  seq: orderSeqController.text.trim(),
-                  customer_id: box.read('kioskID'),
-                  branchcode: branchcode
-                  );
-                  myshoes = await kioskHandler.kioskqueryOrder(kiosk); // 주문번호 일치 확인(16자리까지 입력, 해당 목록 모두 보이게하기)
-                  if(myshoes.isNotEmpty){ //일치 주문번호
-                  orderNum = myshoes.first['seq'].toString().substring(0,15); 
-                  }
-                  else{ //불일치
-                  errorDialog('경고','일치하는 주문번호가 없습니다.');
-                  orderNum = orderSeqController.text.trim();
-                  }
-                }else{ //15자리 아닐때
-                  errorSnackBar('경고', '주문번호 15자리를 모두 입력하세요.');
-                  orderNum = "";
-                }
-                setState(() {});
-              },
-
-              child: const Text("조회")),  
-              const SizedBox(
-                height: 60,
-              ),
-                            const Text('수령가능 목록',
-              style: TextStyle(
-                fontSize: 30
-              ),
-              ),
-              // 주문번호 1번? 각각?
-              Text(
-                "주문번호  $orderNum",
-                style:  const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
+          body: SingleChildScrollView(
+            child: Center(
+                child: Column(
+              children: [
+                          Padding(
+                  padding: const EdgeInsets.only(top: 130,right: 200, left: 200),
+                  child: TextField(
+                    controller: orderSeqController,
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(fontSize: 25),
+                      labelText: "주문번호",
+                      ), 
+                    maxLength: 15,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 30,
+                    ),
+                  ),
                 ),
-                ),
-                // Text(orderNum),
-                
-                if(orderSeqController.text.trim().length == 15 )
-              Expanded(
-                child: SizedBox(
-                  width: 700,
-                  height: 500,
-                  child: ListView.builder(
-                    itemCount: myshoes.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Card(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Image.memory(myshoes[index]['image'],
-                              width: 140,
+                Padding(
+                  padding: const  EdgeInsets.only(top: 20, bottom: 10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(200, 55),
+                      backgroundColor: Colors. indigoAccent
+                    ),
+                      //조회버튼
+                      onPressed: () async {
+                        if (orderSeqController.text.trim().length == 15) {
+                          // 일치
+                          Kiosk kiosk = Kiosk(
+                              seq: orderSeqController.text.trim(),
+                              customer_id: box.read('kioskID'),
+                              branchcode: branchcode);
+                          myshoes = await kioskHandler.kioskqueryOrder(
+                              kiosk); // 주문번호 일치 확인(16자리까지 입력, 해당 목록 모두 보이게하기)
+                          if (myshoes.isNotEmpty) {
+                            //일치 주문번호
+                            orderNum =
+                                myshoes.first['seq'].toString().substring(0, 15);
+                          } else {
+                            //불일치
+                            errorDialog('경고', '일치하는 주문번호가 없습니다.');
+                            orderNum = orderSeqController.text.trim();
+                          }
+                        } else {
+                          //15자리 아닐때
+                          errorSnackBar('경고', '주문번호 15자리를 모두 입력하세요.');
+                          orderNum = "";
+                        }
+                        setState(() {});
+                      },
+                      
+                      child: const Text("조회",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black
+                      )
+                      )
+                      ),
+                ),  
+                  // const Text('수령가능 목록',
+                  //   style: TextStyle(
+                  //     fontSize: 30
+                  //   ),
+                  //   ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        "주문번호  $orderNum",
+                        style:  const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold
+                        ),
+                        ),
+                    ),
+                    Container(
+                      width: 700,
+                      height: 600,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 4)
+                      ),
+                      child: ListView.builder(
+                        itemCount: myshoes.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15), //모서리
                               ),
-                              Column(
+                              elevation: 5, //그림자
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  // Text("주문번호 : ${myshoes[index]['seq'].toString().substring(1,15)}"),
-                                  // Text("주문번호 : ${myshoes[index]['seq'].toString().substring(1,15)}"),
-                                  Text(
-                                    '제품명 : ${myshoes[index]['shoesname']}',
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    Image.memory(myshoes[index]['image'],
+                                    width: 100,
+                                    ),
+                                  
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '제품명 : ${myshoes[index]['shoesname']}',
+                                        style: const TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 15),
+                                    padding: const EdgeInsets.only(top: 13),
                                     child: Text(
                                       '수량 : ${myshoes[index]['quantity']}',
                                       style: const TextStyle(
-                                        fontSize: 17
-                                      ),
-                                      ),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54
+                                        ),
+                                    ),
                                   ),
                                 ],
                               ),
-                                                                ElevatedButton(
-                                    onPressed: (){
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                    onPressed: () {
                                       pickUpDialog(index);
-                                      }, 
-                                      child: const Text('수령하기')),
-
+                                    },
+                                    child: const Text('수령하기'),
+                                    ),
+                              ),
                             ],
-                          ),
+                              ),
+                            ),
+                          );
+                        },
                         ),
-                      );
-                    },
-                    ),
-                ),
-                  
-              ),
-
-
-        ],
-      )),
+                    )
+              ],
+            )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -160,8 +213,8 @@ class _KHomeState extends State<KHome> {
 //수령하기 버튼
   pickUpDialog(index) {
     Get.defaultDialog(
-        title: "확인",
-        middleText: '카운터에서 제품을 수령해주세요',
+        title: "수령확인",
+        middleText: '수령하시겠습니까?',
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         barrierDismissible: false,
         actions: [
@@ -175,15 +228,19 @@ class _KHomeState extends State<KHome> {
                   );
                   int result = await kioskHandler.updateOrder(kiosk);
                   if(result == 0){
-                    errorSnackBar('경고', '문제가 발생했습니다. \n 관리자에게 문의하세요');
+                    errorDialog('경고', '문제가 발생했습니다. \n 관리자에게 문의하세요');
                   }else{
-                    myshoes = await kioskHandler.kioskqueryOrder(kiosk);
                     Get.back();
+                    myshoes = await kioskHandler.kioskqueryOrder(kiosk);
                   }setState(() {
-                    
                   });
               },
-              child: const Text('확인'))
+              child: const Text('수령')
+          ),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('취소')
+            )
         ]);
   }
 

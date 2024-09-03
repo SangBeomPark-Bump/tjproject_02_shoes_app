@@ -29,62 +29,84 @@ class _KLoginState extends State<KLogin> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("더조은 신발가게 강남점"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(200),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("LOGIN",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30
-              ),
-              ),
-              const SizedBox(height: 50),
-              //idd
-              TextField(
-                controller: idController,
-                decoration: const InputDecoration(
-                  hintText: "ID"
+    return GestureDetector(
+      onTap: () =>  FocusScope.of(context).unfocus(),
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'images/shoes_kiosk.png'
+            )
+          )
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(200),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      '더조은 신발가게 강남점',
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold
+                    ),
+                    ),
+                    const SizedBox(
+                      height: 100,
+                    ),
+                    const Text("LOGIN",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30
+                    ),
+                    ),
+                    const SizedBox(height: 50),
+                    //idd
+                    TextField(
+                      controller: idController,
+                      decoration: const InputDecoration(
+                        hintText: "ID"
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    //password 입력
+                    TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        hintText: "Password"
+                      ),
+                    ),
+                    const SizedBox(height: 50,),
+                    ElevatedButton(
+                      onPressed: () async{
+                        Customer customer = Customer(
+                          id: idController.text.trim(),
+                          password:  passwordController.text.trim()
+                        );
+                          int result = await kioskHandler.kioskqueryCustomer(customer);
+                            if(idController.text.trim().isEmpty || 
+                              passwordController.text.trim().isEmpty){
+                                errorSnackBar();
+                            }else{
+                              if(result == 0){
+                                notCorrectDialog();
+                                }else{
+                                  loginDialog();
+                                }
+                            }
+                      }, 
+                    child: const Text('Sign In')
+                    )
+                    
+                  ],
                 ),
               ),
-              const SizedBox(height: 30),
-              //password 입력
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  hintText: "Password"
-                ),
-              ),
-              const SizedBox(height: 50,),
-              ElevatedButton(
-                onPressed: () async{
-                  Customer customer = Customer(
-                    id: idController.text.trim(),
-                    password:  passwordController.text.trim()
-                  );
-                    int result = await kioskHandler.kioskqueryCustomer(customer);
-                      if(idController.text.trim().isEmpty || 
-                        passwordController.text.trim().isEmpty){
-                          errorSnackBar();
-                      }else{
-                        if(result == 0){
-                          notCorrectDialog();
-                          }else{
-                            loginDialog();
-                          }
-                      }
-                }, 
-              child: const Text('Sign In')
-              )
-              
-            ],
+            ),
           ),
         ),
       ),

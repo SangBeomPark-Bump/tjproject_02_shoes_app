@@ -85,7 +85,9 @@ Future<List<Map<String,dynamic>>> kioskqueryOrder(Kiosk kiosk)async{
     select o.seq ,o.shoes_seq, o.quantity, s.shoesname, s.image, o.order_seq
     from ordered as o
     join shoes as s on o.shoes_seq = s.seq
-    where o.seq like ? and o.customer_id = ? and o.pickuptime is 'null' and o.branch_branchcode = ?
+    where o.seq like ? and o.customer_id = ? and 
+    o.pickuptime is 'null' and 
+    o.branch_branchcode = ? and o.canceltime is 'null' 
     ''', ['${kiosk.seq}%', kiosk.customer_id, kiosk.branchcode]
   );
     
