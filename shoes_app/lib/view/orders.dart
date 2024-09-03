@@ -305,6 +305,7 @@ class _OrdersState extends State<Orders> {
     );
   }
 
+
   Future<void> functionAvailable() async {
     availableMonths = await handler.loadAvailableMonth();
     if (monthInitial) {
