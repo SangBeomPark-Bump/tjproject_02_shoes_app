@@ -92,7 +92,20 @@ class _AppHomeState extends State<AppHome> {
                     : handler.queryNike(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return _buildGridView(snapshot.data!);
+                    if (snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Text('검색하신 결과와 일치하는 제품이 없습니다.'),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return _buildGridView(snapshot.data!);
+                    }
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shoes_app/view/cart.dart';
 import 'package:shoes_app/vm/database_handler.dart';
 
 class Detail extends StatefulWidget {
@@ -24,11 +25,11 @@ class _DetailState extends State<Detail> {
   int quantity = 0; //신발 수량 count
   final box = GetStorage();
   //-------장바구니-----------
-  late List<int> wishSeq; 
-  late List<String> wishShoesname; 
-  late List<int> wishPrice; 
-  late List<Uint8List> wishImage; 
-  late List<int> wishSize; 
+  late List<int> wishSeq;
+  late List<String> wishShoesname;
+  late List<int> wishPrice;
+  late List<Uint8List> wishImage;
+  late List<int> wishSize;
   late List<String> wishBrand;
   late List<int> wishQuantity;
 
@@ -36,7 +37,7 @@ class _DetailState extends State<Detail> {
   void initState() {
     super.initState();
     handler = DatabaseHandler();
-    seq = value[0] as int?; 
+    seq = value[0] as int?;
     shoesname = value[1] as String;
     price = value[2] as int;
     image = value[3] as Uint8List;
@@ -45,11 +46,11 @@ class _DetailState extends State<Detail> {
 
     //장바구니 담은 목록 가져오기
     readBox();
-
   }
-  readBox(){
-        wishSeq = box.read<List<int>>('wishSeq') ?? []; 
-    wishShoesname = box.read<List<String>>('wishShoesname') ?? []; 
+
+  readBox() {
+    wishSeq = box.read<List<int>>('wishSeq') ?? [];
+    wishShoesname = box.read<List<String>>('wishShoesname') ?? [];
     wishPrice = box.read<List<int>>('wishPrice') ?? [];
     wishImage = box.read<List<Uint8List>>('wishImage') ?? [];
     wishSize = box.read<List<int>>('wishSize') ?? [];
@@ -64,7 +65,9 @@ class _DetailState extends State<Detail> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.shopping_cart),
+            child: GestureDetector(
+                onTap: () => Get.to(CartPage()),
+                child: Icon(Icons.shopping_cart)),
           )
         ],
       ),
@@ -78,24 +81,19 @@ class _DetailState extends State<Detail> {
                 color: Colors.grey,
                 child: Image.memory(image, width: 100),
               ),
-              Text(
-                brand,
-                style : TextStyle(fontSize: 15, fontWeight: FontWeight.normal)
-              ),
-                //브랜드 값 가져옴
-              Text(
-                shoesname,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              ),
-                //제품명 값 가져옴
-              Text(
-                "${price.toString()}원",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red)
-              ),
-                      //가격 값 가져옴
+              Text(brand,
+                  style:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.normal)),
+              //브랜드 값 가져옴
+              Text(shoesname,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+              //제품명 값 가져옴
+              Text("${price.toString()}원",
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red)),
+              //가격 값 가져옴
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,10 +117,7 @@ class _DetailState extends State<Detail> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         //신발 아이콘 이미지 삽입?
-                        Icon(
-                          Icons.skateboarding, 
-                          size: 60
-                        ),
+                        Icon(Icons.skateboarding, size: 60),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -135,9 +130,7 @@ class _DetailState extends State<Detail> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: 20
-                    ),
+                  SizedBox(width: 20),
                   Column(
                     children: [
                       Container(
@@ -182,10 +175,10 @@ class _DetailState extends State<Detail> {
                       SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          if(quantity!=0){
-                          addToCart();
-                          Get.back();
-                          }else{}
+                          if (quantity != 0) {
+                            addToCart();
+                            Get.back();
+                          } else {}
                         },
                         child: Text('장바구니 담기',
                             style: TextStyle(color: Colors.black87)),
@@ -229,6 +222,4 @@ class _DetailState extends State<Detail> {
     box.write('wishBrand', wishBrand);
     box.write('wishQuantity', wishQuantity);
   }
-
-
 }

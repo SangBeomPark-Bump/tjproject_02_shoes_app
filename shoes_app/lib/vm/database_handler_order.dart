@@ -58,24 +58,8 @@ class DatabaseHandlerOrder {
     );
   }
 
-  Future<List<OrderList>> queryOrderList() async {
-    final Database db = await initializeDB();
-    final List<Map<String, Object?>> queryResult = await db.rawQuery(
-      """
-SELECT s.image as image, s.price*o.quantity as totalPrice, s.shoesname, o.seq, b.branchname, o.quantity, o.paymenttime, o.canceltime, o.pickuptime
-from shoes s, ordered o, customer c, branch b
-where c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode = o.branch_branchcode
-          """,
-    );
-
-    for (int i = 0; i < queryResult.length; i++) {
-      print(queryResult[i]);
-    }
-
-    return queryResult.map((e) => OrderList.fromMap(e)).toList();
-  }
-
-  Future<List<OrderList>> queryUser(id) async {
+  Future<List<OrderList>> queryUser(String id) async {
+    // 유저별 구매내역 쿼리
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult = await db.rawQuery("""
 SELECT s.image as image, s.price*o.quantity as totalPrice, s.shoesname, o.seq, b.branchname, o.quantity, o.paymenttime, o.canceltime, o.pickuptime
@@ -84,20 +68,14 @@ where c.id = ? and c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode 
           """, [id]);
 
     for (int i = 0; i < queryResult.length; i++) {
-      print(queryResult[0]["totalPrice"]);
-      print(queryResult[0]["shoesname"]);
-      print(queryResult[0]["seq"]);
-      print(queryResult[0]["branchname"]);
-      print(queryResult[0]["quantity"]);
-      print(queryResult[0]["paymenttime"]);
-      print(queryResult[0]["canceltime"]);
-      print(queryResult[0]["pickuptime"]);
+      //print(queryResult[0]["totalPrice"]);
     }
 
     return queryResult.map((e) => OrderList.fromMap(e)).toList();
   }
 
   Future<List<Shoes>> queryShoesByQuery(String query) async {
+    // app home 화면에서 검색 쿼리
     final db = await initializeDB(); // 데이터베이스 연결
     final result = await db.rawQuery(
       """
@@ -112,7 +90,21 @@ where c.id = ? and c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode 
     return result.map((e) => Shoes.fromMap(e)).toList(); // 데이터 변환
   }
 
+  Future<List<OrderList>> queryOrderByQuery(String id, String date) async {
+    final Database db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.rawQuery("""
+select s.image as image, s.price*o.quantity as totalPrice, s.shoesname, o.seq, b.branchname, o.quantity, o.paymenttime, o.canceltime, o.pickuptime
+from shoes s, ordered o, customer c, branch b
+where strftime('%Y-%m', o.paymenttime) like ? and c.id = ? and c.id = o.customer_id and s.seq= o.shoes_seq and b.branchcode = o.branch_branchcode
+        """, [date, id]);
+    for (int i = 0; i < queryResult.length; i++) {
+      //print(queryResult[0]);
+    }
+    return queryResult.map((e) => OrderList.fromMap(e)).toList();
+  }
+
   Future<List<Shoes>> queryNike() async {
+    //app home 화면에서 nike 신발 목록 쿼리
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult =
         await db.rawQuery('SELECT * FROM shoes where brand = ?', ['NIKE']);
@@ -120,6 +112,7 @@ where c.id = ? and c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode 
   }
 
   Future<List<Shoes>> queryNewB() async {
+    //app home 화면에서 newB 신발 목록 쿼리
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult = await db
         .rawQuery('SELECT * FROM shoes where brand = ?', ['newBalance']);
@@ -127,6 +120,7 @@ where c.id = ? and c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode 
   }
 
   Future<List<Shoes>> queryPro() async {
+    //app home 화면에서 Pro 신발 목록 쿼리
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult =
         await db.rawQuery('SELECT * FROM shoes where brand = ?', ['prosPecs']);
@@ -134,6 +128,7 @@ where c.id = ? and c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode 
   }
 
   Future<void> cancelShoe(String cancelTime, String seq) async {
+    //구매내역에서 취소 시 쿼리
     print(cancelTime);
     final Database db = await initializeDB();
     await db.rawUpdate(
@@ -144,5 +139,23 @@ where c.id = ? and c.id = o.customer_id AND s.seq= o.shoes_seq AND b.branchcode 
     """,
       [cancelTime, seq],
     );
+  }
+
+  Future<List<String>> loadAvailableMonth() async {
+    final Database db = await initializeDB();
+
+    List<Map<String, dynamic>> rawData = await db.rawQuery(
+      '''
+        SELECT substr(o.paymenttime, 0, 7) as ym
+        FROM ordered o
+        where ym != 'null'
+        GROUP BY ym
+      ''',
+    );
+    List<String> availableMonths = [];
+    for (Map i in rawData) {
+      availableMonths.add(i['ym']);
+    }
+    return availableMonths;
   }
 }

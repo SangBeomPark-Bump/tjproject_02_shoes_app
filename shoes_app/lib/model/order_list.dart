@@ -31,7 +31,8 @@ class OrderList {
         seq = res['seq'] ?? "",
         branchName = res['branchname'] ?? "",
         quantity = res['quantity'] ?? 1,
-        paymenttime = DateTime.parse(res['paymenttime']),
+        paymenttime =
+            DateTime.parse(res['paymenttime']), // 데이터베이스 값을 datetime으로 바꿔줌
         canceltime = res['canceltime'] == 'null'
             ? null
             : DateTime.parse(res['canceltime']),
