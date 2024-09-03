@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shoes_app/view/kiosk/k_login.dart';
 import 'package:shoes_app/view/management/m_home.dart';
 import 'view/home.dart';
 import 'view/sign/sign_in.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SignInPage(),
+      home: const KLogin(),
     );
   }
 }
