@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:shoes_app/model/order_list.dart';
+import 'package:shoes_app/view/sign/sign_in.dart';
 import 'package:shoes_app/vm/database_handler_order.dart';
 
 class Orders extends StatefulWidget {
@@ -23,6 +24,8 @@ class _OrdersState extends State<Orders> {
   late String userID;
   final box = GetStorage();
   late List<String> availableMonths;
+
+
 
   @override
   void initState() {
@@ -45,6 +48,12 @@ class _OrdersState extends State<Orders> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('구매 내역'),
+        leading: IconButton(
+          icon: const Icon(Icons.exit_to_app),
+          onPressed: () {
+            _showLogoutConfirmationDialog(context);
+          },
+        ),
       ),
       backgroundColor: Colors.white,
       body: Center(
@@ -305,12 +314,55 @@ class _OrdersState extends State<Orders> {
     );
   }
 
+// 로그아웃 버튼
+void _showLogoutConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('로그아웃하시겠습니까?'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('아니오'),
+            onPressed: () {
+              Navigator.of(context).pop(); // 대화 상자 닫기
+            },
+          ),
+          TextButton(
+            child: const Text('예'),
+            onPressed: () {
+              Navigator.of(context).pop(); // 대화 상자 닫기
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SignInPage()), // SignInPage로 이동
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
+
+
+
+
+
 
   Future<void> functionAvailable() async {
     availableMonths = await handler.loadAvailableMonth();
-    if (monthInitial) {
+    print(availableMonths);
+    if (monthInitial && availableMonths.isNotEmpty) {
       monthInitial = false;
       selectedMonth = availableMonths[availableMonths.length - 1];
+
+    } else{
+
     }
     setState(() {});
   }

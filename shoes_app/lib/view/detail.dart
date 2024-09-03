@@ -64,12 +64,24 @@ class _DetailState extends State<Detail> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.shopping_cart),
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              onPressed: () {
+                Get.back();
+                Get.off(()=>HomePage(sIdx: 1,));
+              },
+              icon: const Icon(Icons.shopping_cart)
+            ),
           )
         ],
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new),
+        onPressed: () {
+          Get.off(HomePage());
+        },
+      ),
       ),
       body: SingleChildScrollView(
         child: Center(

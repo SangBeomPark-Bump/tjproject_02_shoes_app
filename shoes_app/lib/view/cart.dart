@@ -10,6 +10,7 @@ import 'package:shoes_app/model/order.dart';
 import 'package:shoes_app/view/detail.dart';
 import 'package:shoes_app/view/home.dart';
 import 'package:shoes_app/view/orders.dart';
+import 'package:shoes_app/view/sign/sign_in.dart';
 import 'package:shoes_app/vm/database_cart_handler.dart';
 
 class CartPage extends StatefulWidget {
@@ -76,6 +77,12 @@ readBranch()async{
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('장바구니'),
+        leading: IconButton(
+          icon: const Icon(Icons.exit_to_app),
+          onPressed: () {
+            _showLogoutConfirmationDialog(context);
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -296,6 +303,38 @@ deleteCart(){
   setState(() {
     
   });
+}
+
+// 로그아웃 버튼
+void _showLogoutConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('로그아웃하시겠습니까?'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('아니오'),
+            onPressed: () {
+              Navigator.of(context).pop(); // 대화 상자 닫기
+            },
+          ),
+          TextButton(
+            child: const Text('예'),
+            onPressed: () {
+              Navigator.of(context).pop(); // 대화 상자 닫기
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SignInPage()), // SignInPage로 이동
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 
