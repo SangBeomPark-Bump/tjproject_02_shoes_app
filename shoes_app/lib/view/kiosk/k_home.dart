@@ -26,6 +26,7 @@ class _KHomeState extends State<KHome> {
   late List<Map<String,dynamic>> myshoes;
   late String orderNum;
   late int branchcode;
+  Kiosk? curKiosk;
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _KHomeState extends State<KHome> {
     box.read('kioskID');
     myshoes =[];
     orderNum = "";
-    branchcode =1;
+    branchcode =3;
   }
   @override
   Widget build(BuildContext context) {
@@ -95,6 +96,7 @@ class _KHomeState extends State<KHome> {
                               seq: orderSeqController.text.trim(),
                               customer_id: box.read('kioskID'),
                               branchcode: branchcode);
+                          curKiosk = kiosk;
                           myshoes = await kioskHandler.kioskqueryOrder(
                               kiosk); // 주문번호 일치 확인(16자리까지 입력, 해당 목록 모두 보이게하기)
                           if (myshoes.isNotEmpty) {
@@ -234,9 +236,11 @@ class _KHomeState extends State<KHome> {
                   if(result == 0){
                     errorDialog('경고', '문제가 발생했습니다. \n 관리자에게 문의하세요');
                   }else{
+                    
+                    myshoes = await kioskHandler.kioskqueryOrder(curKiosk!);
                     Get.back();
-                    myshoes = await kioskHandler.kioskqueryOrder(kiosk);
-                  }setState(() {
+                  }
+                  setState(() {
                   });
               },
               child: const Text('수령')

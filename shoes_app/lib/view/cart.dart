@@ -251,10 +251,12 @@ readBranch()async{
     Get.defaultDialog(
       title: "구매 하시겠습니까?",
       middleText: "수령장소 : $dropdownValue",
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       barrierDismissible: false,
       actions: [
         TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.grey
+          ),
           onPressed: () {
             // 구매 처리 로직
             cartInsertOrder();
@@ -267,6 +269,9 @@ readBranch()async{
           child: const Text('예'),
         ),
         TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.amber
+          ),
           onPressed: () {
             Get.back(); // 다이얼로그 닫기
           },
