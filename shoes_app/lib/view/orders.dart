@@ -132,7 +132,7 @@ class _OrdersState extends State<Orders> {
                                           child: Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                                "주문번호: ${ordered.seq.substring(1, 15)}"),
+                                                "주문번호: ${ordered.seq.substring(0, 15)}"),
                                           ),
                                         ),
                                         Row(
@@ -304,6 +304,7 @@ class _OrdersState extends State<Orders> {
       ),
     );
   }
+
 
   Future<void> functionAvailable() async {
     availableMonths = await handler.loadAvailableMonth();

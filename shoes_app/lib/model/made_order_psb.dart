@@ -154,7 +154,8 @@ class MadeOrderPsb{
       
 
         DateTime paymenttime = DateTime(2024, j, day, random.nextInt(24) , random.nextInt(60), random.nextInt(60));
-          orderList.add(Order(
+            
+          Order a=  Order(
             branch_branchcode: random.nextInt(3)+1, 
             customer_id: nameList[random.nextInt(7)], 
             shoes_seq: random.nextInt(6)+1, 
@@ -163,8 +164,10 @@ class MadeOrderPsb{
             paymenttime: paymenttime,
             pickuptime : (((j == 8 && pickupCancle>7) || pickupCancle>8) ? null : paymenttime.add(const Duration(days: 1))),
             canceltime : (pickupCancle >8)? paymenttime.add(const Duration(days: 1)) : null
-          )
-        );
+          );
+          a.seqMaker();
+          orderList.add(a);
+        
       }
   }
 
